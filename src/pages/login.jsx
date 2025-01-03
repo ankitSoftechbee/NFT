@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { UserPen } from 'lucide-react';
 
 import LoginForm from '@/components/forms/login-form';
 import SignupForm from '@/components/forms/signup-form';
@@ -15,20 +16,19 @@ const Login = () => {
                 </div>
                 <Tabs defaultValue="Login" className="w-full">
                     <div className="flex justify-between items-center">
-                        <TabsList className="p-0 bg-amber-700 rounded-full border border-amber-500/30 ">
-                            {['Login'].map(curr => (
-                                <TabsTrigger
-                                    key={curr}
-                                    value={curr}
-                                    className="w-full px-6 py-2 text-base rounded-full 
-                                                           transition-all duration-300
-                                                           data-[state=active]:bg-emerald-600/30 
-                                                           data-[state=active]:text-white"
-                                >
-                                    {curr}
-                                </TabsTrigger>
-                            ))}
-                        </TabsList>
+
+
+                        <nav class="flex" aria-label="Breadcrumb" className='mb-4'>
+                            <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
+                                <li class="inline-flex items-center">
+                                    <a href="#" class="inline-flex items-center text-lg font-bold text-white-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white">
+                                       <UserPen className="w-6 h-6 mr-2" />
+                                        LogIn
+                                    </a>
+                                </li>
+                            </ol>
+                        </nav>
+
                     </div>
                     <TabsContent value="Login">
                         <LoginForm />

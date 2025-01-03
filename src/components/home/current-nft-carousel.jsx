@@ -82,7 +82,16 @@ const CurrentNFTCarousel = () => {
                                         <span>Jun</span>
                                         <span>2025</span>
                                     </div>
-                                    <Button className="bg-green-700">Buy</Button>
+                                    <button
+                                        type="submit"
+                                        className="w-full p-2 rounded-full 
+                                            bg-gradient-to-r from-[#f539f8] via-[#c342f9] to-[#5356fb]
+                                            transition-all duration-300 
+                                            active:scale-[0.98]
+                                            disabled:opacity-50 disabled:cursor-not-allowed mt-5"
+                                    >
+                                        Buy
+                                    </button>
 
                                 </div>
                             </div>
