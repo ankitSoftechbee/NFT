@@ -45,6 +45,7 @@
         "react-slick": "^0.30.3",
         "react-sparklines": "^1.7.0",
         "slick-carousel": "^1.8.1",
+        "sweetalert2": "^11.15.10",
         "swiper": "^11.1.15",
         "tailwind-merge": "^2.5.5",
         "tailwindcss-animate": "^1.0.7",

@@ -16,5 +16,7 @@ export const operationAPIConfig = {
     buyPackage: key + '/api/User/BuyPackage',
     sellPackage: key + '/api/User/SellPackage',
     getBuyPackageById: key + '/RidPackages',
-    getSellPackageById: key + '/RidBuy'
+    getSellPackageById: key + '/RidBuy',
+    buyPackage:key+'/api/User/BuyPackage',
+    sellPackage:key + '/api/User/SellPackage'
 }

@@ -1,6 +1,7 @@
 import requestApi from '@/service/service';
 import { ShoppingCart, HelpingHand } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import { useParams } from 'react-router-dom';
 
 const Operation = () => {
@@ -25,7 +26,7 @@ const Operation = () => {
         const body = { RID: id }
         const response = await requestApi.getBuyPackageById(body)
         if (response && response.name) {
-            setData(response.data)
+            setData(response)
         }
 
     }
@@ -33,9 +34,43 @@ const Operation = () => {
         const body = { RID: id }
         const response = await requestApi.getSellPackageById(body)
         if (response && response.packType) {
-            setData(response.data)
+            setData(response)
         }
     }
+
+    const handleClick = async (id) => {
+        if (operationName === 'Buy') {
+            const body = {
+                "packname": data.name,
+                "buyAmount": data.buyAmount,
+                "sellAmount": data.sellAmount,
+                "profitAmount": data.profitAmount,
+                "img": data.img,
+                "remark": data.remark
+            }
+            const response = await requestApi.buyPackage(body)
+            if(response){
+                toast.success('Buy Successfully')
+            } else {
+                toast.error('Buy Failed')
+            }
+        } else if (operationName === 'Sell') {
+            const body = {
+                "rid": data.rid,
+            }
+            const response = await requestApi.sellPackage(body)
+            if(response){
+                toast.success('Sell Successfully')
+            } else {
+                toast.error('Sell Failed')
+            }
+        } else {
+            toast.error('Invalid Request')
+        }
+
+    }
+
+    console.log("data", data)
 
     return <div>
         <nav class="flex" aria-label="Breadcrumb" className='mt-2 mb-4'>
@@ -106,6 +141,7 @@ const Operation = () => {
                                             transition-all duration-300 
                                             active:scale-[0.98]
                                             disabled:opacity-50 disabled:cursor-not-allowed m-2"
+                            onClick={() => handleClick(operationName === 'Buy' ? data.packid : data.rid)}
                         >
                             {operationName}
                         </button>

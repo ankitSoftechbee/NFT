@@ -76,7 +76,7 @@ const BuyNFTList = () => {
                              transition-all duration-300 
                              active:scale-[0.98]
                              disabled:opacity-50 disabled:cursor-not-allowed m-2"
-                            onClick={handleClick}
+                            onClick={() => handleClick(nftName === 'Buy' ? item.packid : item.rid)}
                         >
                             {nftName}
                         </button>

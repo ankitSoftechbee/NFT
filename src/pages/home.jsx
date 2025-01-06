@@ -9,6 +9,7 @@ import Announcement from '@/components/announcement';
 import { Copy, Key } from 'lucide-react';
 import PurchasedNFTCarousel from '@/components/home/purchased-nft-carousel';
 import requestApi from '@/service/service';
+import Swal from 'sweetalert2';
 
 const Home = ({ }) => {
     const [data, setData] = useState('')
@@ -41,6 +42,18 @@ const Home = ({ }) => {
             setPurchasedNFTList(response.data)
         }
     }
+
+    useEffect(()=>{
+       if(data){
+        if (data.fundWallet<50){
+            Swal.fire({
+                title: "Warning",
+                text: "Fund balance is low",
+                icon: "error"
+              });
+        }
+       }
+    },[data])
 
     return (
         <div className="relative flex flex-col overflow-scroll">

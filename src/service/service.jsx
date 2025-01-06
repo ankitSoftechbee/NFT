@@ -5,7 +5,7 @@ async function postData(url, body) {
     try {
         let _r = await axios.post(url, body, {
             headers: {
-                Authorization: "Bearer ".concat(localStorage.getItem("user_token")),
+                Authorization: "Bearer ".concat(localStorage.getItem("access_token")),
             },
         });
         return _r.data;
@@ -95,6 +95,16 @@ const requestApi = {
         let r = await getDataWithParams(url, body);
         return r;
     },
+    buyPackage:async (body)=>{
+        const url = operationAPIConfig.buyPackage;
+        let r = await postData(url,body);
+        return r;
+    },
+    sellPackage:async (body)=>{
+        const url = operationAPIConfig.sellPackage;
+        let r = await postData(url,body);
+        return r;
+    }
 
 }
 
