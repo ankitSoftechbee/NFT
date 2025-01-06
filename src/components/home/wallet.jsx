@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowLeftRight, ArrowRightLeft, ArrowUp, BellDot, CreditCard, File, FileChartColumn, HandCoins, Loader2, Plus, RefreshCcw,ShoppingCart,HelpingHand } from 'lucide-react';
+import { ArrowLeftRight, ArrowRightLeft, ArrowUp, BellDot, CreditCard, File, FileChartColumn, HandCoins, Loader2, Plus, RefreshCcw, ShoppingCart, HelpingHand } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import ProfileSheet from './profile-sheet';
 import { NavLink } from 'react-router-dom';
@@ -7,9 +7,8 @@ import metaBullApi from '@/api/game-app';
 import { cn } from '@/lib/utils';
 import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from '@/components/ui/drawer';
 
-const WalletWidget = ({ }) => {
-    const { data: walletBalance, isLoading, isFetching, refetch } = metaBullApi.useGetWalletBalanceQuery();
-    const { data: dashboard } = metaBullApi.useDashboardSummaryQuery();
+const WalletWidget = (props) => {
+    const { data } = props
 
     return (
         <div className="relative bg-gradient-to-r from-[rgba(2,0,36,1)] via-[rgba(44,131,149,1)] to-[rgba(0,212,255,1)] p-5 flex flex-col gap-2 m-2 overflow-clip h-max rounded-3xl border-emerald-500/30 border min-h-[320px]">
@@ -17,30 +16,32 @@ const WalletWidget = ({ }) => {
             <div className="flex justify-between mb-5">
                 <div className="flex items-center gap-4">
                     <Avatar className="h-12 w-12 bg-black">
-                        <AvatarImage src={dashboard?.photo} />
-                        <AvatarFallback className="bg-emerald-700">{dashboard?.name?.toUpperCase().split('')[0]}</AvatarFallback>
+                        <AvatarImage src={data?.photo || ''} />
+                        <AvatarFallback className="bg-emerald-700">{data?.username?.toUpperCase().split('')[0] || ''}</AvatarFallback>
                     </Avatar>
 
-                    <div className="font-medium">{dashboard?.name}</div>
+                    <div className="font-medium">{data?.name || ''}</div>
                 </div>
             </div>
             <div className="grid grid-cols-2 justify-start">
                 <div>
                     <div className="flex items-center justify-start gap-3">
                         <div className="text-sm text-app-text-muted">Fund Balance</div>
-                        <RefreshCcw size={17} className={cn('text-app-text-muted', { 'animate-spin': isLoading || isFetching })} onClick={() => refetch()} />
+                        {/* <RefreshCcw size={17} className={cn('text-app-text-muted', { 'animate-spin': isLoading || isFetching })} onClick={() => refetch()} /> */}
                     </div>
                     <div className="text-[30px] font-medium z-10">
-                        {isLoading || isFetching ? <Loader2 className="animate-spin" /> : new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(walletBalance?.fundBalance)}
+                        ${data?.fundWallet || 0}
+                        {/* {isLoading || isFetching ? <Loader2 className="animate-spin" /> : new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(walletBalance?.fundBalance)} */}
                     </div>
                 </div>
                 <div>
                     <div className="flex items-center justify-start gap-3">
                         <div className="text-sm text-app-text-muted">Account Balance</div>
-                        <RefreshCcw size={17} className={cn('text-app-text-muted', { 'animate-spin': isLoading || isFetching })} onClick={() => refetch()} />
+                        {/* <RefreshCcw size={17} className={cn('text-app-text-muted', { 'animate-spin': isLoading || isFetching })} onClick={() => refetch()} /> */}
                     </div>
                     <div className="text-[30px] font-medium z-10">
-                        {isLoading || isFetching ? <Loader2 className="animate-spin" /> : new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(walletBalance?.withdrawBalance)}
+                        ${data?.incomeWallet || 0}
+                        {/* {isLoading || isFetching ? <Loader2 className="animate-spin" /> : new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(walletBalance?.withdrawBalance)} */}
                     </div>
                 </div>
             </div>
@@ -49,8 +50,8 @@ const WalletWidget = ({ }) => {
                 {[
                     ['Add money', Plus, '/deposit'],
                     ['Withdraw', ArrowUp, '/withdraw'],
-                    ['Buy', ShoppingCart, '/transfer-p2p'],
-                    ['Sell', HelpingHand, '/top-up'],
+                    ['Buy', ShoppingCart, '/nft-list/Buy'],
+                    ['Sell', HelpingHand, '/nft-list/Sell'],
                 ].map(([title, Icon, link], index) => (
                     <NavLink to={link} state={{ title }} key={index} className="flex flex-col items-center gap-2 active:scale-95">
                         <div className="flex flex-col justify-center items-center bg-white/10 rounded-full p-3 md:p-4">

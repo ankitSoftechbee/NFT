@@ -47,6 +47,8 @@ import AutoPayHistory from './pages/sidebar/autopay-history';
 import UpdateProfilePic from './pages/sidebar/update-profile-pic';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
+import Operation from './pages/sidebar/operation';
+import BuyNFTList from './pages/sidebar/nft-list';
 
 const router = createHashRouter([
     { index: true, element: <Login /> },
@@ -188,6 +190,14 @@ const router = createHashRouter([
             {
                 path: 'transfer-to-fund-history',
                 element: <TransferToFundHistory />,
+            },
+            {
+                path: 'nft-list/:nftName/*',
+                element: <BuyNFTList />,
+            },
+            {
+                path: 'operation/:nftID/:operationName/*',
+                element: <Operation />,
             },
         ],
     },

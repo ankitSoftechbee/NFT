@@ -14,56 +14,66 @@ const LoginForm = ({ }) => {
     const [dailyClosingMutation] = metaBullApi.useDailyClosingMutation();
     const navigate = useNavigate();
 
-    const handleSubmit=(values)=>{
-        const response=requestApi.loginReq(values);
-        console.log(response);
-
+    const handleSubmit = async (values) => {
+        const response = await requestApi.loginReq(values);
+        if (response.token) {
+            toast.success('login successfully')
+            localStorage.setItem('access_token', response.token)
+            localStorage.setItem('token-expireIn', response.expireIn);
+            sessionStorage.setItem('user',JSON.stringify(response.user))
+            navigate('/home')
+            formik.resetForm()
+        } else {
+            toast.error('Invalid username or password');
+            formik.resetForm()
+        }
     }
 
     const formik = useFormik({
         initialValues: {
-            email: '',
+            username: '',
             password: '',
         },
         validationSchema: Yup.object().shape({
-            email: Yup.string().required('Username is required'),
+            username: Yup.string().required('Username is required'),
             password: Yup.string().min(3, 'Password must be at least 3 characters').required('Password is required'),
         }),
-        onSubmit: (values, action) => {
-            action.setSubmitting(true);
-            toast.promise(
-                loginMutation({
-                    username: values.email,
-                    password: values.password,
-                })
-                    .unwrap()
-                    .then(payload => {
-                        window.localStorage.setItem('metabull-token', payload.token);
-                        window.localStorage.setItem('metabull-expireIn', payload.expireIn);
-                        window.localStorage.setItem('metabull-user', JSON.stringify(payload.user));
+        onSubmit: handleSubmit
+        // onSubmit: (values, action) => {
+        //     action.setSubmitting(true);
+        //     toast.promise(
+        //         loginMutation({
+        //             username: values.email,
+        //             password: values.password,
+        //         })
+        //             .unwrap()
+        //             .then(payload => {
+        //                 window.localStorage.setItem('metabull-token', payload.token);
+        //                 window.localStorage.setItem('metabull-expireIn', payload.expireIn);
+        //                 window.localStorage.setItem('metabull-user', JSON.stringify(payload.user));
 
-                        dailyClosingMutation()
-                            .unwrap()
-                            .then(payload => console.log('closing hit'))
-                            .catch(err => console.log('closing miss'));
+        //                 dailyClosingMutation()
+        //                     .unwrap()
+        //                     .then(payload => console.log('closing hit'))
+        //                     .catch(err => console.log('closing miss'));
 
-                        navigate('/home');
-                        action.resetForm();
-                        action.setSubmitting(false);
-                        return payload;
-                    })
-                    .catch(error => {
-                        action.setSubmitting(false);
-                        console.log(error);
-                        throw error;
-                    }),
-                {
-                    loading: 'logging in',
-                    success: payload => `Welcome, ${payload.user.name}`,
-                    error: error => `login failed : Incorrect email or password`,
-                }
-            );
-        },
+        //                 navigate('/home');
+        //                 action.resetForm();
+        //                 action.setSubmitting(false);
+        //                 return payload;
+        //             })
+        //             .catch(error => {
+        //                 action.setSubmitting(false);
+        //                 console.log(error);
+        //                 throw error;
+        //             }),
+        //         {
+        //             loading: 'logging in',
+        //             success: payload => `Welcome, ${payload.user.name}`,
+        //             error: error => `login failed : Incorrect email or password`,
+        //         }
+        //     );
+        // },
     });
 
     return (
@@ -72,16 +82,16 @@ const LoginForm = ({ }) => {
                 Username
             </label>
             <input
-                id="email"
-                name="email"
+                id="username"
+                name="username"
                 type="text"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                value={formik.values.email}
+                value={formik.values.username}
                 placeholder="Username"
-                className={cn('form-input', formik.errors.email && formik.touched.email && 'focus:ring-0 ring-2 ring-red-600')}
+                className={cn('form-input', formik.errors.username && formik.touched.username && 'focus:ring-0 ring-2 ring-red-600')}
             />
-            {formik.errors.email && formik.touched.email && <div className="text-red-500">{formik.errors.email}</div>}
+            {formik.errors.username && formik.touched.username && <div className="text-red-500">{formik.errors.username}</div>}
             <label htmlFor="password" className="text-white mt-2">
                 Password
             </label>

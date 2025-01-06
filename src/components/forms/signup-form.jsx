@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import { Eye, EyeOff } from 'lucide-react';
@@ -8,19 +8,62 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import COUNTRIES from '@/lib/countryCodes.json';
 import { v4 as uuidv4 } from 'uuid';
+import requestApi from '@/service/service';
+import axios from 'axios';
+import { authAPIConfig } from '@/api/apiConfig';
 
-const SignupForm = ({}) => {
+
+const validationSchema = Yup.object().shape({
+    sponsorID: Yup.string().required('SponsorID is required'),
+    name: Yup.string().min(2, 'Name must be at least 2 characters').required('Name is required'),
+    email: Yup.string().email('Invalid email address').required('Email is required'),
+    country: Yup.string().required('Country is required'),
+    code: Yup.string().required('Phone code is required'),
+    mobile: Yup.string()
+        .matches(/^[0-9]+$/, 'Mobile number must be numeric')
+        .min(8, 'Mobile number is too short')
+        .max(15, 'Mobile number is too long')
+        .required('Mobile number is required'),
+    password: Yup.string().min(3, 'Password must be at least 3 characters').required('Password is required'),
+})
+
+const SignupForm = ({ }) => {
+    const navigate = useNavigate()
     const [showPassword, setShowPassword] = useState(false);
-    const [checkSponsorId] = metaBullApi.useLazyCheckSponsorIdQuery();
-    const [signupMutation] = metaBullApi.useSignupMutation();
-    const [emailMutation] = metaBullApi.useEmailAfterSignupMutation();
-    const [getUserDetail] = metaBullApi.useLazyUserDetailQuery();
-    const [sponsorName, setSponsorName] = useState('');
-    let [searchParams] = useSearchParams();
+    const [countryList, setCountryList] = useState([])
+    const [isSponsor, setIsSponsor] = useState(false)
+    const [sponsor, setSponsor] = useState('')
+    const [debounceTimer, setDebounceTimer] = useState(null);
+
+    useEffect(() => {
+        fetchCountryList()
+    }, [])
+
+    const fetchCountryList = async () => {
+        const response = await requestApi.countryList()
+        if (response.data && response.data.length > 0) {
+            setCountryList(response.data)
+        }
+    }
+
+    const handleSubmit = async (values) => {
+        if (isSponsor) {
+            const response = await requestApi.signupReq(values)
+            if (response && response.newUser) {
+                toast.success('Signup successfully')
+                formik.resetForm()
+                navigate('/')
+            } else {
+                toast.success('Signup Failed')
+            }
+        } else {
+            toast.error('Invalid Sponsor ID !')
+        }
+    }
 
     const formik = useFormik({
         initialValues: {
-            sponsorID: searchParams.get('sponsorId') || '',
+            sponsorID: '',
             name: '',
             email: '',
             country: '',
@@ -28,119 +71,120 @@ const SignupForm = ({}) => {
             mobile: '',
             password: '',
         },
-        validationSchema: Yup.object().shape({
-            sponsorID: Yup.string().required('SponsorID is required'),
-            name: Yup.string().min(2, 'Name must be at least 2 characters').required('Name is required'),
-            email: Yup.string().email('Invalid email address').required('Email is required'),
-            country: Yup.string().required('Country is required'),
-            code: Yup.string().required('Phone code is required'),
-            mobile: Yup.string()
-                .matches(/^[0-9]+$/, 'Mobile number must be numeric')
-                .min(8, 'Mobile number is too short')
-                .max(15, 'Mobile number is too long')
-                .required('Mobile number is required'),
-            password: Yup.string().min(3, 'Password must be at least 3 characters').required('Password is required'),
-        }),
-        onSubmit: (values, action) => {
-            action.setSubmitting(false);
+        validationSchema: validationSchema,
+        onSubmit: handleSubmit,
+        // onSubmit: (values, action) => {
+        //     action.setSubmitting(false);
 
-            toast.promise(
-                signupMutation({
-                    ...values,
-                    code: values.code.slice(1),
-                })
-                    .unwrap()
-                    .then(async payload => {
-                        if (payload.status === -1) throw new Error('Wrong details');
+        //     toast.promise(
+        //         signupMutation({
+        //             ...values,
+        //             code: values.code.slice(1),
+        //         })
+        //             .unwrap()
+        //             .then(async payload => {
+        //                 if (payload.status === -1) throw new Error('Wrong details');
 
-                        // Execute getUserDetail
-                        try {
-                            const userDetail = await getUserDetail({ userName: payload.userID }).unwrap();
-                            toast(
-                                t => (
-                                    <span>
-                                        <div className="font-bold">Login Successful.. Note login id</div>
-                                        <div>
-                                            Login ID: <span className="font-medium">{userDetail.username}</span>
-                                        </div>
-                                        <button className="border p-1 mt-5 rounded-sm bg-emerald-600 hover:bg-emerald-600/40 text-white" onClick={() => toast.dismiss(t.id)}>
-                                            Dismiss
-                                        </button>
-                                    </span>
-                                ),
-                                { duration: 120000 }
-                            );
-                        } catch (error) {
-                            console.error('Error fetching user details:', error);
-                            throw error;
-                        }
+        //                 // Execute getUserDetail
+        //                 try {
+        //                     const userDetail = await getUserDetail({ userName: payload.userID }).unwrap();
+        //                     toast(
+        //                         t => (
+        //                             <span>
+        //                                 <div className="font-bold">Login Successful.. Note login id</div>
+        //                                 <div>
+        //                                     Login ID: <span className="font-medium">{userDetail.username}</span>
+        //                                 </div>
+        //                                 <button className="border p-1 mt-5 rounded-sm bg-emerald-600 hover:bg-emerald-600/40 text-white" onClick={() => toast.dismiss(t.id)}>
+        //                                     Dismiss
+        //                                 </button>
+        //                             </span>
+        //                         ),
+        //                         { duration: 120000 }
+        //                     );
+        //                 } catch (error) {
+        //                     console.error('Error fetching user details:', error);
+        //                     throw error;
+        //                 }
 
-                        // Execute emailMutation
-                        try {
-                            const emailResponse = await emailMutation({ userName: payload.userID }).unwrap();
-                            console.log('Email sent:', emailResponse);
-                        } catch (emailError) {
-                            console.error('Error in email mutation:', emailError);
-                            throw emailError;
-                        }
+        //                 // Execute emailMutation
+        //                 try {
+        //                     const emailResponse = await emailMutation({ userName: payload.userID }).unwrap();
+        //                     console.log('Email sent:', emailResponse);
+        //                 } catch (emailError) {
+        //                     console.error('Error in email mutation:', emailError);
+        //                     throw emailError;
+        //                 }
 
-                        // Reset form after all successful operations
-                        action.setSubmitting(false);
-                        action.resetForm();
+        //                 // Reset form after all successful operations
+        //                 action.setSubmitting(false);
+        //                 action.resetForm();
 
-                        return payload;
-                    })
-                    .catch(error => {
-                        action.setSubmitting(false);
-                        console.error('Error in signup or other operations:', error);
-                        throw error;
-                    }),
-                {
-                    loading: 'registering...',
-                    success: payload => `Registration successful, login please`,
-                    error: error => `Registration failed: ${error.message}`,
-                }
-            );
-        },
+        //                 return payload;
+        //             })
+        //             .catch(error => {
+        //                 action.setSubmitting(false);
+        //                 console.error('Error in signup or other operations:', error);
+        //                 throw error;
+        //             }),
+        //         {
+        //             loading: 'registering...',
+        //             success: payload => `Registration successful, login please`,
+        //             error: error => `Registration failed: ${error.message}`,
+        //         }
+        //     );
+        // },
     });
 
-    useEffect(() => {
-        handleCheckSponsorId(searchParams.get('sponsorId') || '');
-    }, [searchParams]);
+    const checkSponserId = useCallback((sponserId) => {
+        if (!sponserId) return;
 
-    const handleCountryChange = value => {
-        formik.setFieldValue('country', value);
-        const selectedCountry = COUNTRIES.find(curr => curr.name === value);
-        formik.setFieldValue('code', selectedCountry ? selectedCountry.dial_code : '');
+        axios.get(authAPIConfig.checkSponsor, {
+            params: {
+                UserName: sponserId
+            }
+        }).then((response) => {
+            if (response.data.name !== null) {
+                setIsSponsor(true);
+                setSponsor(response.data)
+            } else {
+                setIsSponsor(false);
+                toast.error("Invalid Sponser ID !");
+            }
+        }).catch((error) => {
+            console.log(error);
+        });
+    }, []);
+
+    const handleSponserIdChange = (e) => {
+        formik.handleChange(e); // Call formik's handler for controlled input
+        const { value } = e.target;
+
+        if (debounceTimer) {
+            clearTimeout(debounceTimer); // Clear the previous timer if user types again
+        }
+
+        // Set a new timeout to call the API after 3 seconds
+        const newTimer = setTimeout(() => {
+            checkSponserId(value);
+        }, 3000);
+
+        setDebounceTimer(newTimer);
     };
 
-    const handleCheckSponsorId = async value => {
-        formik.setFieldValue('sponsorID', value);
-
-        await checkSponsorId(value)
-            .unwrap()
-            .then(payload => {
-                setSponsorName(payload.name);
-                return payload;
-            })
-            .catch(error => {
-                console.log(error);
-                throw error;
-            });
-    };
 
     return (
         <form onSubmit={formik.handleSubmit} className="flex flex-col gap-2">
             <label htmlFor="sponsorID" className="text-white">
                 Sponsor ID
-                {formik.touched.sponsorID ? sponsorName ? <span className="text-emerald-500"> ( {sponsorName} )</span> : <span className="text-red-500"> ( No Sponsor Found )</span> : null}
+                {sponsor ? <span className="text-emerald-500"> ( {sponsor.name} )</span> : ''}
             </label>
 
             <input
                 id="sponsorID"
                 name="sponsorID"
                 type="text"
-                onChange={e => handleCheckSponsorId(e.target.value)}
+                onChange={handleSponserIdChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.sponsorID}
                 placeholder="Sponsor ID"
@@ -188,16 +232,19 @@ const SignupForm = ({}) => {
                 id="country"
                 name="country"
                 type="text"
-                onChange={e => handleCountryChange(e.target.value)}
+                onChange={e => {
+                    formik.setFieldValue('country', e.target.value)
+                    formik.setFieldValue('code', countryList.length > 0 ? countryList.find((country) => country.country === e.target.value).code : '')
+                }}
                 onBlur={formik.handleBlur}
                 value={formik.values.country}
                 placeholder="Enter Country"
                 className={cn('form-input', formik.errors.country && formik.touched.country && 'focus:ring-0 ring-2 ring-red-600')}
             >
                 <option value="">Select Country</option>
-                {COUNTRIES.map(country => (
-                    <option value={country.name} key={uuidv4()}>
-                        {country.name}
+                {countryList.map(country => (
+                    <option value={country.country} key={uuidv4()}>
+                        {country.country}
                     </option>
                 ))}
             </select>
@@ -207,23 +254,17 @@ const SignupForm = ({}) => {
                 Mobile
             </label>
             <div className="flex items-center gap-2">
-                <select
+                <input
                     id="code"
                     name="code"
                     type="text"
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     value={formik.values.code}
-                    placeholder="Select Code"
-                    className={cn('form-input max-w-[90px]', formik.errors.code && formik.touched.code && 'focus:ring-0 ring-2 ring-red-600')}
-                >
-                    <option value="+91">+91</option>
-                    {COUNTRIES.map(country => (
-                        <option value={country.dial_code} className="text-emerald-300" key={uuidv4()}>
-                            {country.dial_code}
-                        </option>
-                    ))}
-                </select>
+                    placeholder="Enter Code"
+                    className={cn('form-input', formik.errors.code && formik.touched.code && 'focus:ring-0 ring-2 ring-red-600')}
+                />
+                {formik.errors.code && formik.touched.code && <div className="text-red-500">{formik.errors.code}</div>}
                 <input
                     id="mobile"
                     name="mobile"

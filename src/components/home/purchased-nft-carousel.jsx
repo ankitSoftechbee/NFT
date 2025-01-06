@@ -1,21 +1,14 @@
 import React from 'react';
-import EthWidget from '../ethusd-widget';
-import BtcWidget from '../btcusd-widget';
-import SolWidget from '../solusd-widget';
 import Slider from 'react-slick';
-import { Button } from '../ui/button';
+import { useNavigate } from 'react-router-dom';
+import { Avatar, Card, CardActions, CardContent, CardHeader, CardMedia } from '@mui/material';
+import { ChartCandlestick } from 'lucide-react';
 
 
-const PurchasedNFTCarousel = () => {
-    const content = [
-        { id: 'tradingincome', name: 'Trading Profit' },
-        { id: 'tradingpassiveincome', name: 'Trading Profit Income' },
-        { id: 'directincome', name: 'Direct Income' },
-        { id: 'levelincome', name: 'Level Income' },
-        { id: 'rewardincome', name: 'Reward Income' },
-        { id: 'royaltyincome', name: 'Royalty Income' },
-        { id: 'clubincome', name: 'Club Income' },
-    ];
+const CurrentNFTCarousel = (props) => {
+    const { purchasedNFTList } = props
+    const navigate = useNavigate()
+
     const settings = {
         infinite: true, // Infinite scroll
         speed: 500, // Animation speed
@@ -45,55 +38,54 @@ const PurchasedNFTCarousel = () => {
         <div className="bg-app-bg-secondary p-4 flex flex-col gap-5">
             <div className="text-lg text-app-text-primary font-medium">Purchased NFT</div>
             <Slider {...settings} className="w-full mt-1 px-1">
-                {content.map((item, index) => {
+                {purchasedNFTList && purchasedNFTList.map((item, index) => {
                     // Retrieve the corresponding value from the data object
                     // const price = data[item.id] !== undefined ? data[item.id] : 'N/A';
 
                     return (
                         <div className='px-1'>
-                            <div className="max-w-sm mx-auto p-4 bg-gray-500 text-white rounded-xl shadow-lg flex flex-col justify-between">
-                                {/* <!-- Header --> */}
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center">
-                                        {/* <!-- Icon --> */}
-                                        <div className="bg-orange-500 rounded-full w-8 h-8 flex items-center justify-center">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="white" className="w-5 h-5">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01m6.938-6.938a9 9 0 11-12.728 0 9 9 0 0112.728 0z" />
-                                            </svg>
-                                        </div>
-                                        <div className="ml-3">
-                                            <h2 className="text-lg font-semibold">BTCUSD</h2>
-                                            <p className="text-sm text-gray-400">Bitcoin / U.S. Dollar</p>
-                                        </div>
-                                    </div>
-                                    {/* <!-- Logo --> */}
-                                    <div className="flex items-center justify-center bg-gray-800 rounded-full p-1">
-                                        <span className="text-xs font-bold text-gray-300">TV</span>
-                                    </div>
-                                </div>
+                            <Card sx={{ maxWidth: 345 }}>
+                                <CardHeader
+                                    avatar={
+                                        <Avatar sx={{ bgcolor: "red" }} aria-label="NFT">
+                                            <ChartCandlestick />
+                                        </Avatar>
+                                    }
 
-                                <div className="my-6">
-                                    <p className="text-4xl font-bold">$96,459.30</p>
-                                </div>
+                                    title={item?.packType || ''}
+                                    subheader={item?.remark || ''}
 
-                                <div className="flex justify-between items-center">
-                                    <div className="text-gray-400 flex space-x-2">
-                                        <span>Feb</span>
-                                        <span>Jun</span>
-                                        <span>2025</span>
+
+                                ></CardHeader>
+                                <CardMedia
+                                    component="img"
+                                    height="194"
+                                    image={'https://images.unsplash.com/photo-1735437629103-0fac198c7c2e?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwzfHx8ZW58MHx8fHx8'}
+                                    alt="Paella dish"
+                                />
+                                <CardContent>
+                                    <div className='w-full flex justify-between'>
+                                        <p>Buy Price <div className='text-green-900 font-bold'> ${item?.buyAmount || 0}</div></p>
+                                        <p>Sell Price <div className='text-red-500 font-bold'> ${item?.sellAmount || 0}</div></p>
                                     </div>
+                                </CardContent>
+                                <CardActions disableSpacing>
+
                                     <button
                                         type="submit"
                                         className="w-full p-2 rounded-full 
                                             bg-gradient-to-r from-[#f539f8] via-[#c342f9] to-[#5356fb]
                                             transition-all duration-300 
                                             active:scale-[0.98]
-                                            disabled:opacity-50 disabled:cursor-not-allowed mt-5"
+                                            disabled:opacity-50 disabled:cursor-not-allowed"
+                                        onClick={() => navigate(`/operation/${item.rid}/Sell`)}
                                     >
                                         Sell
                                     </button>
-                                </div>
-                            </div>
+
+
+                                </CardActions>
+                            </Card>
                         </div>
                     );
                 })}
@@ -102,4 +94,4 @@ const PurchasedNFTCarousel = () => {
     );
 };
 
-export default PurchasedNFTCarousel;
+export default CurrentNFTCarousel;

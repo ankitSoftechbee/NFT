@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import metaBullApi from '@/api/game-app';
 import moment from 'moment';
@@ -9,12 +9,10 @@ import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
 import BusinessIcon from '@mui/icons-material/Business';
 import GroupsIcon from '@mui/icons-material/Groups';
 
-const ContentTabs = () => {
-    const { data, isLoading, isFetching } = metaBullApi.useDashboardSummaryQuery();
+const ContentTabs = (props) => {
+    const { data } = props
 
-    console.log(data);
-
-    if (isLoading || isFetching) {
+    if (data === '') {
         return <div className="text-center">Loading...</div>;
     }
 
@@ -47,12 +45,12 @@ const ContentTabs = () => {
                     <div className="grid grid-cols-1 gap-3">
                         <div className="relative flex flex-col gap-2 rounded-lg py-2 px-5 bg-[#242427]">
                             <div className="text-app-text-muted">Username</div>
-                            <div className="text-xl text-purple-500">{data?.username}</div>
+                            <div className="text-xl text-purple-500">{data?.username || ''}</div>
                             <div className="absolute w-1 h-6 bg-purple-500 top-2 left-0 rounded-full"></div>
                         </div>
                         <div className="relative flex flex-col gap-2 rounded-lg py-2 px-5 bg-[#242427]">
                             <div className="text-app-text-muted">Name</div>
-                            <div className="text-xl text-purple-500">{data?.name}</div>
+                            <div className="text-xl text-purple-500">{data?.name || ''}</div>
                             <div className="absolute w-1 h-6 bg-purple-500 top-2 left-0 rounded-full"></div>
                         </div>
                         {/* <div className="relative flex flex-col gap-2 rounded-lg py-2 px-5 bg-[#242427]">
@@ -72,7 +70,22 @@ const ContentTabs = () => {
                         </div>
                         <div className="relative flex flex-col gap-2 rounded-lg py-2 px-5 bg-[#242427]">
                             <div className="text-app-text-muted">Status</div>
-                            <div className="text-xl text-purple-500">{data?.status}</div>
+                            <div className="text-xl text-green-500">{data?.status}</div>
+                            <div className="absolute w-1 h-6 bg-purple-500 top-2 left-0 rounded-full"></div>
+                        </div>
+                        <div className="relative flex flex-col gap-2 rounded-lg py-2 px-5 bg-[#242427]">
+                            <div className="text-app-text-muted">Total Funding</div>
+                            <div className="text-xl text-purple-500">{data?.totalFund}</div>
+                            <div className="absolute w-1 h-6 bg-purple-500 top-2 left-0 rounded-full"></div>
+                        </div>
+                        <div className="relative flex flex-col gap-2 rounded-lg py-2 px-5 bg-[#242427]">
+                            <div className="text-app-text-muted">Level Position</div>
+                            <div className="text-xl text-purple-500">{data?.levelName}</div>
+                            <div className="absolute w-1 h-6 bg-purple-500 top-2 left-0 rounded-full"></div>
+                        </div>
+                        <div className="relative flex flex-col gap-2 rounded-lg py-2 px-5 bg-[#242427]">
+                            <div className="text-app-text-muted">Trade no.</div>
+                            <div className="text-xl text-purple-500">{data?.noTrade}</div>
                             <div className="absolute w-1 h-6 bg-purple-500 top-2 left-0 rounded-full"></div>
                         </div>
                         <div className="relative flex flex-col gap-2 rounded-lg">
@@ -129,21 +142,21 @@ const ContentTabs = () => {
                 <TabsContent value="Income" className="bg-[#1d1d1f] p-2 rounded-md">
                     <div className="grid grid-cols-2 gap-3">
                         <div className="relative flex flex-col gap-2 rounded-lg py-2 px-5 bg-[#242427]">
-                            <div className="text-app-text-muted">Direct Sponsor Income</div>
-                            <div className="text-xl text-indigo-500">{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(data?.directsponsorincome)}</div>
+                            <div className="text-app-text-muted">Trading Income</div>
+                            <div className="text-xl text-indigo-500">{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(data?.tradingincome)}</div>
                             <div className="absolute w-1 h-6 bg-indigo-500 top-2 left-0 rounded-full"></div>
                         </div>
                         <div className="relative flex flex-col gap-2 rounded-lg py-2 px-5 bg-[#242427]">
-                            <div className="text-app-text-muted">Staking Income</div>
-                            <div className="text-xl text-indigo-500">{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(data?.roistakingincome)}</div>
+                            <div className="text-app-text-muted">Trading Level Income</div>
+                            <div className="text-xl text-indigo-500">{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(data?.tradinglevelincome)}</div>
                             <div className="absolute w-1 h-6 bg-indigo-500 top-2 left-0 rounded-full"></div>
                         </div>
                         <div className="relative flex flex-col gap-2 rounded-lg py-2 px-5 bg-[#242427]">
-                            <div className="text-app-text-muted">Staking Level Income</div>
-                            <div className="text-xl text-indigo-500">{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(data?.directlevelincome)}</div>
+                            <div className="text-app-text-muted">Reward Income</div>
+                            <div className="text-xl text-indigo-500">{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(data?.rewardincome)}</div>
                             <div className="absolute w-1 h-6 bg-indigo-500 top-2 left-0 rounded-full"></div>
                         </div>
-                        <div className="relative flex flex-col gap-2 rounded-lg py-2 px-5 bg-[#242427]">
+                        {/* <div className="relative flex flex-col gap-2 rounded-lg py-2 px-5 bg-[#242427]">
                             <div className="text-app-text-muted">Rewards Bonus</div>
                             <div className="text-xl text-indigo-500">{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(data?.leadershipbonus)}</div>
                             <div className="absolute w-1 h-6 bg-indigo-500 top-2 left-0 rounded-full"></div>
@@ -152,7 +165,7 @@ const ContentTabs = () => {
                             <div className="text-app-text-muted">GTO Royalty</div>
                             <div className="text-xl text-indigo-500">{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(data?.gtoroyaltyincome)}</div>
                             <div className="absolute w-1 h-6 bg-indigo-500 top-2 left-0 rounded-full"></div>
-                        </div>
+                        </div> */}
                     </div>
                 </TabsContent>
                 <TabsContent value="Business" className="bg-[#1d1d1f] p-2 rounded-md">
@@ -169,7 +182,7 @@ const ContentTabs = () => {
                         </div>
                         <div className="relative flex flex-col gap-2 rounded-lg py-2 px-5 bg-[#242427]">
                             <div className="text-app-text-muted">Team Business</div>
-                            <div className="text-xl text-pink-500">{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(data?.teamBusiness)}</div>
+                            <div className="text-xl text-pink-500">{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(data?.totalBusiness)}</div>
                             <div className="absolute w-1 h-6 bg-pink-500 top-2 left-0 rounded-full"></div>
                         </div>
                         <div className="relative flex flex-col gap-2 rounded-lg py-2 px-5 bg-[#242427]">
@@ -179,12 +192,12 @@ const ContentTabs = () => {
                         </div>
                         <div className="relative flex flex-col gap-2 rounded-lg py-2 px-5 bg-[#242427]">
                             <div className="text-app-text-muted">Power Leg</div>
-                            <div className="text-xl text-pink-500">{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(data?.todayEarnings)}</div>
+                            <div className="text-xl text-pink-500">{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(data?.powerleg)}</div>
                             <div className="absolute w-1 h-6 bg-pink-500 top-2 left-0 rounded-full"></div>
                         </div>
                         <div className="relative flex flex-col gap-2 rounded-lg py-2 px-5 bg-[#242427]">
-                            <div className="text-app-text-muted">Weak Leg</div>
-                            <div className="text-xl text-pink-500">{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(data?.todayEarnings)}</div>
+                            <div className="text-app-text-muted">Weaker Leg</div>
+                            <div className="text-xl text-pink-500">{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(data?.weakerleg)}</div>
                             <div className="absolute w-1 h-6 bg-pink-500 top-2 left-0 rounded-full"></div>
                         </div>
                     </div>
