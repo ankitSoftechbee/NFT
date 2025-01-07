@@ -17,6 +17,13 @@ export const operationAPIConfig = {
     sellPackage: key + '/api/User/SellPackage',
     getBuyPackageById: key + '/RidPackages',
     getSellPackageById: key + '/RidBuy',
-    buyPackage:key+'/api/User/BuyPackage',
-    sellPackage:key + '/api/User/SellPackage'
+    buyPackage: key + '/api/User/BuyPackage',
+    sellPackage: key + '/api/User/SellPackage'
+}
+
+export const depositAPIConfig = {
+    deposit: key + '/api/User/DepositeWallet',
+    getwalletBalance: key + '/WalletBalance',
+    getWalletAddress: key + '',
+    getPaymentMethod: key + '/GetPaymentMode'
 }

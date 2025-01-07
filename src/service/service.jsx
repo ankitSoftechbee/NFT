@@ -1,5 +1,5 @@
 import axios from "axios";
-import { authAPIConfig, dashboardAPIConfig, operationAPIConfig } from "@/api/apiConfig";
+import { authAPIConfig, dashboardAPIConfig, depositAPIConfig, operationAPIConfig } from "@/api/apiConfig";
 
 async function postData(url, body) {
     try {
@@ -8,6 +8,7 @@ async function postData(url, body) {
                 Authorization: "Bearer ".concat(localStorage.getItem("access_token")),
             },
         });
+
         return _r.data;
     } catch (res) {
         return res;
@@ -95,16 +96,31 @@ const requestApi = {
         let r = await getDataWithParams(url, body);
         return r;
     },
-    buyPackage:async (body)=>{
+    buyPackage: async (body) => {
         const url = operationAPIConfig.buyPackage;
-        let r = await postData(url,body);
+        let r = await postData(url, body);
         return r;
     },
-    sellPackage:async (body)=>{
+    sellPackage: async (body) => {
         const url = operationAPIConfig.sellPackage;
-        let r = await postData(url,body);
+        let r = await postData(url, body);
         return r;
-    }
+    },
+    getWalletBalance: async () => {
+        const url = depositAPIConfig.getwalletBalance;
+        let r = await getData(url);
+        return r;
+    },
+    getPaymentMethod: async () => {
+        const url = depositAPIConfig.getPaymentMethod;
+        let r = await getData(url);
+        return r;
+    },
+    deposite: async (body) => {
+        const url = depositAPIConfig.deposit;
+        let r = await postData(url, body);
+        return r;
+    },
 
 }
 

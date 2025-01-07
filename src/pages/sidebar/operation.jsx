@@ -49,20 +49,21 @@ const Operation = () => {
                 "remark": data.remark
             }
             const response = await requestApi.buyPackage(body)
-            if(response){
+            if (response.status === 200) {
                 toast.success('Buy Successfully')
+
             } else {
-                toast.error('Buy Failed')
+                toast.error('Buy Failed: Today limit reached')
             }
         } else if (operationName === 'Sell') {
             const body = {
                 "rid": data.rid,
             }
             const response = await requestApi.sellPackage(body)
-            if(response){
+            if (response.status === 200) {
                 toast.success('Sell Successfully')
             } else {
-                toast.error('Sell Failed')
+                toast.error('Sell Failed: Today limit reached')
             }
         } else {
             toast.error('Invalid Request')
@@ -70,7 +71,6 @@ const Operation = () => {
 
     }
 
-    console.log("data", data)
 
     return <div>
         <nav class="flex" aria-label="Breadcrumb" className='mt-2 mb-4'>
