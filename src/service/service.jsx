@@ -1,5 +1,5 @@
 import axios from "axios";
-import { authAPIConfig, dashboardAPIConfig, depositAPIConfig, operationAPIConfig } from "@/api/apiConfig";
+import { affiliateAPIConfig, authAPIConfig, dashboardAPIConfig, depositAPIConfig, incomeAPIConfig, operationAPIConfig } from "@/api/apiConfig";
 
 async function postData(url, body) {
     try {
@@ -10,6 +10,20 @@ async function postData(url, body) {
         });
 
         return _r.data;
+    } catch (res) {
+        return res;
+    }
+}
+async function postDataWithFormData(url, body) {
+    try {
+        let _r = await axios.post(url, body, {
+            headers: {
+                "Content-Type": 'multipart/form-data',
+                Authorization: "Bearer ".concat(localStorage.getItem("access_token")),
+            },
+        });
+
+        return _r;
     } catch (res) {
         return res;
     }
@@ -54,7 +68,7 @@ async function getDataWithParams(url, body) {
                 Authorization: "Bearer ".concat(localStorage.getItem("access_token")),
             },
         });
-        return _r.data;
+        return _r;
     } catch (res) {
         return res;
     }
@@ -118,9 +132,46 @@ const requestApi = {
     },
     deposite: async (body) => {
         const url = depositAPIConfig.deposit;
+        let r = await postDataWithFormData(url, body);
+        return r;
+    },
+    manualDepositeHistory: async (body) => {
+        const url = depositAPIConfig.manualDepositeHistory;
+        let r = await getDataWithParams(url, body);
+        return r;
+    },
+    fundSummary: async (body) => {
+        const url = depositAPIConfig.fundSummary;
+        let r = await getDataWithParams(url, body);
+        return r;
+    },
+    autoDeposite: async (body) => {
+        const url = depositAPIConfig.autoDeposite;
         let r = await postData(url, body);
         return r;
     },
+    autoDepositeHistory: async (body) => {
+        const url = depositAPIConfig.autoDepositeHistory;
+        let r = await getDataWithParams(url, body);
+        return r;
+    },
+    income: async (body) => {
+        const url = incomeAPIConfig.income;
+        let r = await getDataWithParams(url, body);
+        return r;
+    },
+    directTeam: async (body) => {
+        const url = affiliateAPIConfig.directTeam;
+        let r = await getDataWithParams(url, body);
+        return r;
+    },
+    myTeam: async (body) => {
+        const url = affiliateAPIConfig.myTeam;
+        let r = await getDataWithParams(url, body);
+        return r;
+    },
+    
+
 
 }
 

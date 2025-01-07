@@ -1,3 +1,4 @@
+
 const key = import.meta.env.VITE_API_URL;
 
 export const authAPIConfig = {
@@ -25,5 +26,17 @@ export const depositAPIConfig = {
     deposit: key + '/api/User/DepositeWallet',
     getwalletBalance: key + '/WalletBalance',
     getWalletAddress: key + '',
-    getPaymentMethod: key + '/GetPaymentMode'
+    getPaymentMethod: key + '/GetPaymentMode',
+    manualDepositeHistory: key + '/ManualDepositeHistory',
+    fundSummary: key + '/FundSummary',
+    autoDeposite: key + '/api/User/AutoDeposite',
+    autoDepositeHistory: key + '/AutoDepositeHistory'
+}
+
+export const incomeAPIConfig = {
+    income: key + '/IncomeReport'
+}
+export const affiliateAPIConfig = {
+    directTeam: key + '/DirectTeam',
+    myTeam: key + '/MyTeam'
 }

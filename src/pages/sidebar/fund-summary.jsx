@@ -1,6 +1,6 @@
 import metaBullApi from '@/api/game-app';
 import Pagination from '@/components/ui/pagination/Pagination';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { format } from 'date-fns';
 import { CalendarIcon } from 'lucide-react';
@@ -9,96 +9,137 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import requestApi from '@/service/service';
+import { TablePagination } from '@mui/material';
 
 const FundSummary = () => {
-    const [currentPage, setCurrentPage] = useState(1);
-    const [fromDate, setFromDate] = useState(null);
-    const [toDate, setToDate] = useState(null);
-    const [fromPopoverOpen, setFromPopoverOpen] = useState(false);
-    const [toPopoverOpen, setToPopoverOpen] = useState(false);
-
-    // Format dates for API query
-    const formattedFromDate = fromDate ? format(fromDate, 'yyyy-MM-dd') : 'NULL';
-    const formattedToDate = toDate ? format(toDate, 'yyyy-MM-dd') : 'NULL';
-
-    const {
-        data: result,
-        isLoading,
-        isFetching,
-        isError,
-        error,
-    } = metaBullApi.useFundSummaryQuery({
-        pageNumber: currentPage,
-        fromDate: formattedFromDate,
-        toDate: formattedToDate,
+    const [filter, setFilter] = useState({
+        FromDate: "NULL",
+        ToDate: "NULL",
+        PageNumber: 1,
+        PageSize: 10,
     });
 
-    console.log(result);
+    const [data, setData] = useState([]);
+    const [totalRecords, setTotalRecords] = useState(0);
+       const [isFromDateOpen, setIsFromDateOpen] = useState(false);
+        const [isToDateOpen, setIsToDateOpen] = useState(false);
 
-    const formatDate = dateString => {
-        const date = new Date(dateString);
-        return date.toLocaleString('en-US', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-        });
+    useEffect(() => {
+        fetchData();
+    }, [filter]);
+
+    const fetchData = async () => {
+        try {
+            const response = await requestApi.fundSummary(filter);
+            setData(response?.data?.data || []);
+            setTotalRecords(response?.data.totalRecord || 0);
+        } catch (error) {
+            toast.error("Error fetching deposit history");
+            setData([]);
+            setTotalRecords(0);
+        }
     };
 
-    const handleFromDateSelect = selectedDate => {
-        setFromDate(selectedDate);
-        setFromPopoverOpen(false);
+    const handleFromDateSelect = (selectedDate) => {
+        setFilter((prevFilter) => ({
+            ...prevFilter,
+            FromDate: selectedDate || "NULL",
+            PageNumber: 1,
+        }));
     };
 
-    const handleToDateSelect = selectedDate => {
-        setToDate(selectedDate);
-        setToPopoverOpen(false);
+    const handleToDateSelect = (selectedDate) => {
+        setFilter((prevFilter) => ({
+            ...prevFilter,
+            ToDate: selectedDate || "NULL",
+            PageNumber: 1,
+        }));
+    };
+
+    const handlePageChange = (event, newPage) => {
+        setFilter((prevFilter) => ({
+            ...prevFilter,
+            PageNumber: newPage + 1,
+        }));
+    };
+
+    const handleRowsPerPageChange = (event) => {
+        setFilter((prevFilter) => ({
+            ...prevFilter,
+            PageSize: parseInt(event.target.value, 10),
+            PageNumber: 1,
+        }));
+    };
+
+    const formatDateDisplay = (date) => {
+        if (date === "NULL") return "Pick a date";
+        return format(new Date(date), "LLL dd, y");
     };
 
     return (
         <div className="w-full mx-auto">
-            <div className="flex flex-col sm:flex-row gap-4 mb-4">
-                {/* From Date Selector */}
-                <div className="flex-1">
-                    <Popover open={fromPopoverOpen} onOpenChange={setFromPopoverOpen}>
-                        <PopoverTrigger asChild>
-                            <Button variant={'outline'} className={cn('w-full justify-start text-left font-normal bg-[#1d1d1f] border border-emerald-500/20', !fromDate && 'text-muted-foreground')}>
-                                <CalendarIcon className="mr-2 h-4 w-4" />
-                                {fromDate ? format(fromDate, 'LLL dd, y') : 'Pick from date'}
-                            </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar mode="single" selected={fromDate} onSelect={handleFromDateSelect} initialFocus />
-                        </PopoverContent>
-                    </Popover>
-                </div>
-
-                {/* To Date Selector */}
-                <div className="flex-1">
-                    <Popover open={toPopoverOpen} onOpenChange={setToPopoverOpen}>
-                        <PopoverTrigger asChild>
-                            <Button variant={'outline'} className={cn('w-full justify-start text-left font-normal bg-[#1d1d1f] border border-emerald-500/20', !toDate && 'text-muted-foreground')}>
-                                <CalendarIcon className="mr-2 h-4 w-4" />
-                                {toDate ? format(toDate, 'LLL dd, y') : 'Pick to date'}
-                            </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar mode="single" selected={toDate} onSelect={handleToDateSelect} initialFocus />
-                        </PopoverContent>
-                    </Popover>
-                </div>
-            </div>
+             <div className="flex flex-col sm:flex-row gap-4 mb-4">
+                         {/* From Date Selector */}
+                         <div className="flex-1">
+                             <Popover open={isFromDateOpen} onOpenChange={setIsFromDateOpen}>
+                                 <PopoverTrigger asChild>
+                                     <Button
+                                         variant={"outline"}
+                                         className={cn(
+                                             "w-full justify-start text-left font-normal bg-[#1d1d1f] border border-emerald-500/20",
+                                             filter.FromDate === "NULL" && "text-muted-foreground"
+                                         )}
+                                     >
+                                         <CalendarIcon className="mr-2 h-4 w-4" />
+                                         {formatDateDisplay(filter.FromDate)}
+                                     </Button>
+                                 </PopoverTrigger>
+                                 <PopoverContent className="w-auto p-0" align="start">
+                                     <Calendar
+                                         mode="single"
+                                         selected={filter.FromDate === "NULL" ? null : new Date(filter.FromDate)}
+                                         onSelect={handleFromDateSelect}
+                                         initialFocus
+                                     />
+                                 </PopoverContent>
+                             </Popover>
+                         </div>
+         
+                         {/* To Date Selector */}
+                         <div className="flex-1">
+                             <Popover open={isToDateOpen} onOpenChange={setIsToDateOpen}>
+                                 <PopoverTrigger asChild>
+                                     <Button
+                                         variant={"outline"}
+                                         className={cn(
+                                             "w-full justify-start text-left font-normal bg-[#1d1d1f] border border-emerald-500/20",
+                                             filter.ToDate === "NULL" && "text-muted-foreground"
+                                         )}
+                                     >
+                                         <CalendarIcon className="mr-2 h-4 w-4" />
+                                         {formatDateDisplay(filter.ToDate)}
+                                     </Button>
+                                 </PopoverTrigger>
+                                 <PopoverContent className="w-auto p-0" align="start">
+                                     <Calendar
+                                         mode="single"
+                                         selected={filter.ToDate === "NULL" ? null : new Date(filter.ToDate)}
+                                         onSelect={handleToDateSelect}
+                                         initialFocus
+                                     />
+                                 </PopoverContent>
+                             </Popover>
+                         </div>
+                     </div>
 
             <h2 className="text-lg font-semibold text-white text-left mt-10">Statements</h2>
-
             <div className="space-y-4 mt-5">
-                {result?.totalRecord === 0 ? (
+                {totalRecords === 0 ? (
                     <div className="w-full mx-auto text-center text-white">No records found.</div>
-                ) : isLoading || isFetching ? (
-                    <div className="w-full mx-auto text-center text-white">Loading statements...</div>
                 ) : (
-                    result.data.map((item, index) => (
+                    data.map((item, index) => (
+
                         <div key={index} className="bg-[#1d1d1f] rounded-2xl border border-emerald-500/20 p-4 shadow-lg">
                             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end space-y-2 sm:space-y-0">
                                 <div className="space-y-1">
@@ -117,14 +158,38 @@ const FundSummary = () => {
                                 </div>
 
                                 <div className="flex flex-col justify-end items-end space-y-2">
-                                    <span className="text-xs text-gray-500">{formatDate(item.date)}</span>
+                                    <span className="text-xs text-gray-500">{item?.date.split('T')[0]}</span>
                                 </div>
                             </div>
                         </div>
                     ))
                 )}
 
-                {result?.totalRecord > 0 && <Pagination currentPage={currentPage} totalCount={result.totalRecord} pageSize={10} onPageChange={setCurrentPage} />}
+                {totalRecords > 0 && (
+                    <TablePagination
+                        component="div"
+                        count={totalRecords}
+                        page={filter.PageNumber - 1} // Adjust for zero-based index
+                        onPageChange={handlePageChange}
+                        rowsPerPage={filter.PageSize}
+                        onRowsPerPageChange={handleRowsPerPageChange}
+                        sx={{
+                            color: 'white',
+                            '& .MuiTablePagination-actions button': {
+                                color: 'white',
+                            },
+                            '& .MuiSelect-select': {
+                                color: 'white',
+                            },
+                            '& .MuiSvgIcon-root': {
+                                color: 'white',
+                            },
+                            '& .MuiTablePagination-caption': {
+                                color: 'white',
+                            },
+                        }}
+                    />
+                )}
             </div>
         </div>
     );

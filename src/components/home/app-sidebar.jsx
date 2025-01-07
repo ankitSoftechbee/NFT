@@ -126,11 +126,11 @@ const AppSidebar = () => {
                 {renderSidebarSection(
                     'Bonus Report',
                     [
-                        ['Direct Sponsor Income', '/roi-income', <FileChartColumn className="text-neutral-400" />],
-                        ['Staking Income', '/direct-income', <MoveDownRight className="text-neutral-400" />],
-                        ['Staking Level Income', '/level-income', <FaEquals size={25} className="text-neutral-400" />],
-                        ['Rewards Bonus', '/reward-income', <Coins size={25} className="text-neutral-400" />],
-                        ['GTO Royalty', '/booster-income', <LuRocket size={25} className="text-neutral-400" />],
+                        ['Trading Profit', '/roi-income', <FileChartColumn className="text-neutral-400" />],
+                        // ['Staking Income', '/direct-income', <MoveDownRight className="text-neutral-400" />],
+                        ['Trading Level Profit', '/level-income', <FaEquals size={25} className="text-neutral-400" />],
+                        ['Rewards Profit', '/reward-income', <Coins size={25} className="text-neutral-400" />],
+                        // ['GTO Royalty', '/booster-income', <LuRocket size={25} className="text-neutral-400" />],
                     ],
                     true
                 )}

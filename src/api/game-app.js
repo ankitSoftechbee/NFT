@@ -1,27 +1,27 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 const staggeredBaseQuery = async (args, api, extraOptions) => {
-    try {
-        const result = await fetchBaseQuery({
-            baseUrl: 'https://metabullcoin.com/API',
-            prepareHeaders: () => {
-                const token = window.localStorage.getItem('metabull-token');
-                const myHeaders = new Headers();
+    // try {
+    //     const result = await fetchBaseQuery({
+    //         baseUrl: 'https://metabullcoin.com/API',
+    //         prepareHeaders: () => {
+    //             const token = window.localStorage.getItem('metabull-token');
+    //             const myHeaders = new Headers();
 
-                if (token) {
-                    myHeaders.append('Authorization', `Bearer ` + token);
-                    myHeaders.append('Application', 'application/json');
-                }
+    //             if (token) {
+    //                 myHeaders.append('Authorization', `Bearer ` + token);
+    //                 myHeaders.append('Application', 'application/json');
+    //             }
 
-                return myHeaders;
-            },
-        })(args, api, extraOptions);
+    //             return myHeaders;
+    //         },
+    //     })(args, api, extraOptions);
 
-        return result;
-    } catch (error) {
-        console.error('An error occurred:', error);
-        throw error;
-    }
+    //     return result;
+    // } catch (error) {
+    //     console.error('An error occurred:', error);
+    //     throw error;
+    // }
 };
 
 export const metaBullApi = createApi({

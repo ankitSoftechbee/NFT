@@ -17,7 +17,6 @@ const DepositSchema = Yup.object().shape({
 });
 
 const Deposit = () => {
-    const [selectedMode, setSelectedMode] = useState(true);
     const [copied, setCopied] = useState(false);
     const [qrDialogOpen, setQrDialogOpen] = useState(false);
     const [receiptFile, setReceiptFile] = useState(null);
@@ -56,13 +55,22 @@ const Deposit = () => {
         }
     }
 
-       // Deposit submission handler
-       const handleSubmit = async (values, { setSubmitting, resetForm }) => {
-        console.log(values);
+    // Deposit submission handler
+    const handleSubmit = async (values, { setSubmitting, resetForm }) => {
         setSubmitting(true);
-        const body={Amount:values.amount,PaymentMode:values.paymentMode,Hashcode:values.hashCode,file:values.file}
-        const response=await requestApi.deposite(body);
-        console.log(response)
+        const body = { Amount: values.amount, PaymentMode: values.paymentMode, Hashcode: values.hashCode, file: values.file }
+        const response = await requestApi.deposite(body);
+        if (response.status === 200) {
+            toast.success('Deposite Successfully')
+            formik.resetForm()
+            fetchWalletBalance()
+            fetchPaymentMode()
+            setCopied(false)
+            setQrDialogOpen(false)
+            setReceiptFile(null)
+        } else {
+            toast.error('Deposite Failed')
+        }
     };
 
 
@@ -98,7 +106,7 @@ const Deposit = () => {
         }
     };
 
- 
+
 
     return (
         <div className="w-full mx-auto p-4 bg-[#1d1d1f] rounded-lg">
@@ -124,7 +132,7 @@ const Deposit = () => {
                 </div>
             </div>
 
-            <form onSubmit={formik.handleSubmit} className="space-y-4 bg-[#2a2a2c] p-6 rounded-2xl border border-emerald-500/20">
+            <form onSubmit={formik.handleSubmit} className="space-y-4 bg-[#2a2a2c] mt-4 p-6 rounded-2xl border border-emerald-500/20">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label className="block text-white mb-2">Amount (MBC)</label>
