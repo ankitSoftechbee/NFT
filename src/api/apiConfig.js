@@ -5,13 +5,15 @@ export const authAPIConfig = {
     login: key + '/api/Authentication/token',
     countryList: key + '/api/Authentication/Country',
     checkSponsor: key + '/api/Authentication/ChecKId',
-    signup: key + '/api/Authentication/SignUp'
+    signup: key + '/api/Authentication/SignUp',
+    sendEmail: key + '/api/Authentication/MSGEMAIL',
+    triggerAPI:key+'/api/Authentication/DailyClosing'
 }
 export const dashboardAPIConfig = {
     dashboard: key + '/Dashboard',
     currentNFT: key + '/Packages',
     purchasedNFT: key + '/BuyInvestmentHistory',
-    news:key+'/News'
+    news: key + '/News'
 }
 
 export const operationAPIConfig = {

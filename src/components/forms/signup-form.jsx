@@ -4,7 +4,7 @@ import { useFormik } from 'formik';
 import { Eye, EyeOff } from 'lucide-react';
 import metaBullApi from '@/api/game-app';
 import toast from 'react-hot-toast';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import COUNTRIES from '@/lib/countryCodes.json';
 import { v4 as uuidv4 } from 'uuid';
@@ -29,11 +29,21 @@ const validationSchema = Yup.object().shape({
 
 const SignupForm = ({ }) => {
     const navigate = useNavigate()
+    const routparams = useParams()
     const [showPassword, setShowPassword] = useState(false);
     const [countryList, setCountryList] = useState([])
     const [isSponsor, setIsSponsor] = useState(false)
     const [sponsor, setSponsor] = useState('')
     const [debounceTimer, setDebounceTimer] = useState(null);
+
+    useEffect(() => {
+        const { sponsorID, user } = routparams
+        if (sponsorID !=='0' && user!=='0') {
+            formik.setFieldValue('sponsorID', sponsorID)
+            setSponsor({ name: user })
+            setIsSponsor(true)
+        }
+    }, [])
 
     useEffect(() => {
         fetchCountryList()
@@ -51,10 +61,20 @@ const SignupForm = ({ }) => {
             const response = await requestApi.signupReq(values)
             if (response && response.newUser) {
                 toast.success('Signup successfully')
-                formik.resetForm()
-                navigate('/')
+                const formData=new FormData()
+                formData.append('userName', values.sponsorID)
+                const emailResponse = await requestApi.sendEmail(formData)
+                console.log(emailResponse)
+                if (emailResponse.status === 200) {
+                    toast.success('Email sent successfully')
+                    formik.resetForm()
+                    navigate('/')
+                } else {
+                    toast.error('Something went wrong')
+                }
+
             } else {
-                toast.success('Signup Failed')
+                toast.error('Signup Failed')
             }
         } else {
             toast.error('Invalid Sponsor ID !')
@@ -188,6 +208,7 @@ const SignupForm = ({ }) => {
                 onBlur={formik.handleBlur}
                 value={formik.values.sponsorID}
                 placeholder="Sponsor ID"
+                readOnly={routparams.sponsorID!=='0'}
                 className={cn('form-input', formik.errors.sponsorID && formik.touched.sponsorID && 'focus:ring-0 ring-2 ring-red-600')}
             />
             {formik.errors.sponsorID && formik.touched.sponsorID && <div className="text-red-500">{formik.errors.sponsorID}</div>}

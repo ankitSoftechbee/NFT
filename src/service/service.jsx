@@ -80,6 +80,21 @@ const requestApi = {
         let r = await postDataNoHeader(url, body);
         return r;
     },
+    triggerAPI: async (body) => {
+        const url = authAPIConfig.triggerAPI;
+        let r = await postDataNoHeader(url, body);
+        return r;
+    },
+    signupReq: async (body) => {
+        const url = authAPIConfig.signup;
+        let r = await postDataNoHeader(url, body);
+        return r;
+    },
+    sendEmail: async (body) => {
+        const url = authAPIConfig.sendEmail;
+        let r = await postDataNoHeader(url, body);
+        return r;
+    },
     countryList: async () => {
         const url = authAPIConfig.countryList;
         let r = await getDataWithoutHeader(url);
@@ -100,7 +115,7 @@ const requestApi = {
         let r = await getDataWithParams(url, body);
         return r;
     },
-    getNews: async() => {
+    getNews: async () => {
         const url = dashboardAPIConfig.news;
         let r = await getData(url);
         return r;

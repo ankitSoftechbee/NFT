@@ -53,7 +53,7 @@ import BuyNFTList from './pages/sidebar/nft-list';
 const router = createHashRouter([
     { index: true, element: <Login /> },
     { path: 'forget', element: <Forget /> },
-    { path: 'register', element: <Register /> },
+    { path: 'register/:sponsorID/:user/*', element: <Register /> },
     { path: 'website', element: <Website /> },
     {
         element: <MainLayout />,

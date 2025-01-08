@@ -12,7 +12,7 @@ const Register = () => {
             <div className="w-full max-w-md bg-[#161617] rounded-2xl shadow-2xl border border-emerald-500/20 p-6">
                 <div className="flex items-center mb-5 gap-2">
                     <img src={LOGO} className="h-20 w-20 object-contain" />
-                    <div className="text-yellow-500 text-lg">Welcome to MetaBull</div>
+                    <div className="text-yellow-500 text-lg">Welcome to NFT</div>
                 </div>
                 <Tabs defaultValue="Register" className="w-full">
                     <div className="flex justify-between items-center">

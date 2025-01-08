@@ -37,7 +37,7 @@ const Login = () => {
 
                 <div className="text-center mt-4 text-sm text-gray-500">
                     Don't have an account?
-                    <NavLink to={'/register'} replace={true} onClick={() => setActiveTab('Register')} className="ml-2 text-emerald-400 hover:underline">
+                    <NavLink to={'/register/0/0'} replace={true} onClick={() => setActiveTab('Register')} className="ml-2 text-emerald-400 hover:underline">
                         Register
                     </NavLink>
                 </div>

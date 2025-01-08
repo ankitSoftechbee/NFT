@@ -11,6 +11,7 @@ import GroupsIcon from '@mui/icons-material/Groups';
 
 const ContentTabs = (props) => {
     const { data } = props
+    console.log(data)
 
     if (data === '') {
         return <div className="text-center">Loading...</div>;
@@ -93,7 +94,7 @@ const ContentTabs = (props) => {
                                 <div
                                     className="flex justify-between gap-3 items-center text-sm bg-[#242427]/50 p-4 border-purple-500/30 border rounded-lg text-yellow-100 overflow-hidden"
                                     onClick={() => {
-                                        navigator.clipboard.writeText(`${window.location.origin}/User/#/register?sponsorId=${data?.username}`);
+                                        navigator.clipboard.writeText(`${window.location.origin}/User/#/register/${data?.username}/${data?.name}`);
                                         toast.success('Copied to clipboard');
                                     }}
                                 >

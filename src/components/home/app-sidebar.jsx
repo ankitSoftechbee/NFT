@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     CircleDollarSign,
     CircleHelp,
@@ -34,12 +34,14 @@ import metaBullApi from '@/api/game-app';
 
 const AppSidebar = () => {
     const navigate = useNavigate();
+    const [data, setData] = useState('')
 
-    const { data, isLoading, isFetching } = metaBullApi.useDashboardSummaryQuery();
+    useEffect(() => {
+        const user = JSON.parse(sessionStorage.getItem('user'))
+        setData(user)
+    }, [])
 
-    if (isLoading || isFetching) {
-        return <div className="text-center">Loading...</div>;
-    }
+
     console.log(data);
 
     // Helper function to render sidebar sections
@@ -77,7 +79,7 @@ const AppSidebar = () => {
                     <div
                         className="flex justify-between gap-3 items-center text-sm bg-[#242427]/50 p-4 border-yellow-500/30 border rounded-lg text-yellow-100 overflow-hidden"
                         onClick={() => {
-                            navigator.clipboard.writeText(`${window.location.origin}/User/#/register?sponsorId=${data?.username}`);
+                            navigator.clipboard.writeText(`${window.location.origin}/User/#/register/${data?.userName}/${data?.name}`);
                             toast.success('Copied to clipboard');
                         }}
                     >

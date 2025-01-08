@@ -17,6 +17,7 @@ const LoginForm = ({ }) => {
     const handleSubmit = async (values) => {
         const response = await requestApi.loginReq(values);
         if (response.token) {
+            const res=await requestApi.triggerAPI({})
             toast.success('login successfully')
             localStorage.setItem('access_token', response.token)
             localStorage.setItem('token-expireIn', response.expireIn);
