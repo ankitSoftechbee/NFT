@@ -29,8 +29,8 @@ const BuyNFTList = () => {
     const fetchSellList = async () => {
         const body = { PageNumber: 1, PageSize: 100 }
         const response = await requestApi.purchasedNFT(body)
-        if (response && response.data.length > 0) {
-            setData(response.data)
+        if (response && response?.data?.data?.length > 0) {
+            setData(response.data.data)
         }
     }
 
@@ -45,6 +45,7 @@ const BuyNFTList = () => {
         }
     }
 
+    console.log(data)
 
     return <>
         <nav class="flex" aria-label="Breadcrumb" className='mt-2 mb-4'>
@@ -60,7 +61,7 @@ const BuyNFTList = () => {
             {data.map((item) => {
                 return <div className='relative bg-[#1d1d1f] p-2 m-1 rounded-md'>
                     <div className='bg-[#1d1d1f] rounded-md'>
-                        <img src='https://plus.unsplash.com/premium_photo-1673468922209-c5fc27fd3a12?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' className='w-[100%] h-[180px]' />
+                        <img src={item?.img || ''} className='w-[100%] h-[180px]' />
                     </div>
                     <div className="my-2">
                         <p className="text-xl">{item?.name || item?.packType || ''}</p>

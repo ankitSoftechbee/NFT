@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Eye, EyeOff, Pause } from 'lucide-react';
 import metaBullApi from '@/api/game-app';
 import toast from 'react-hot-toast';
+import requestApi from '@/service/service';
 
 // Validation Schema
 const ChangePasswordSchema = Yup.object().shape({
@@ -17,7 +18,7 @@ const ChangePasswordSchema = Yup.object().shape({
 });
 
 const ChangeTransactionPassword = () => {
-    const [changeTransactionPasswordMutation] = metaBullApi.useChangeTransactionPasswordMutation();
+    // const [changeTransactionPasswordMutation] = metaBullApi.useChangeTransactionPasswordMutation();
 
     const [showPasswords, setShowPasswords] = useState({
         currentPassword: false,
@@ -57,29 +58,36 @@ const ChangeTransactionPassword = () => {
         </div>
     );
 
-    const handleSubmit = (values, action) => {
-        action.setSubmitting(true);
-        toast.promise(
-            changeTransactionPasswordMutation({ currentPassword: values.currentPassword, newPassword: values.newPassword })
-                .unwrap()
-                .then(payload => {
-                    if (payload === 0) throw new Error('Current password is incorrect');
+    const handleSubmit = async (values, action) => {
+        const body = { OldPassword: values.currentPassword, NewPassword: values.newPassword }
+        // action.setSubmitting(true);
+        // toast.promise(
+        //     changeTransactionPasswordMutation({ currentPassword: values.currentPassword, newPassword: values.newPassword })
+        //         .unwrap()
+        //         .then(payload => {
+        //             if (payload === 0) throw new Error('Current password is incorrect');
 
-                    action.setSubmitting(false);
-                    action.resetForm();
-                    return payload;
-                })
-                .catch(error => {
-                    action.setSubmitting(false);
-                    console.log(error);
-                    throw error;
-                }),
-            {
-                loading: 'updating...',
-                success: payload => `password updated`,
-                error: error => `${error.message}`,
-            }
-        );
+        //             action.setSubmitting(false);
+        //             action.resetForm();
+        //             return payload;
+        //         })
+        //         .catch(error => {
+        //             action.setSubmitting(false);
+        //             console.log(error);
+        //             throw error;
+        //         }),
+        //     {
+        //         loading: 'updating...',
+        //         success: payload => `password updated`,
+        //         error: error => `${error.message}`,
+        //     }
+        // );
+        const response = await requestApi.changeTransactionPassword(body)
+        if (response.status === 200) {
+            toast.success('password updated')
+        } else {
+            toast.error('updation failed')
+        }
     };
 
     return (

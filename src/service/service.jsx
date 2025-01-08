@@ -1,5 +1,5 @@
 import axios from "axios";
-import { affiliateAPIConfig, authAPIConfig, dashboardAPIConfig, depositAPIConfig, incomeAPIConfig, operationAPIConfig } from "@/api/apiConfig";
+import { affiliateAPIConfig, authAPIConfig, dashboardAPIConfig, depositAPIConfig, incomeAPIConfig, operationAPIConfig, profileAPIConfig, purchasedNFTAPIConfig, withdrawAPIConfig } from "@/api/apiConfig";
 
 async function postData(url, body) {
     try {
@@ -9,7 +9,7 @@ async function postData(url, body) {
             },
         });
 
-        return _r.data;
+        return _r;
     } catch (res) {
         return res;
     }
@@ -54,7 +54,7 @@ async function getData(url) {
                 Authorization: "Bearer ".concat(localStorage.getItem("access_token")),
             },
         });
-        return _r.data;
+        return _r;
     } catch (res) {
         return res;
     }
@@ -99,6 +99,12 @@ const requestApi = {
         const url = dashboardAPIConfig.purchasedNFT;
         let r = await getDataWithParams(url, body);
         return r;
+    },
+    getNews: async() => {
+        const url = dashboardAPIConfig.news;
+        let r = await getData(url);
+        return r;
+
     },
     getBuyPackageById: async (body) => {
         const url = operationAPIConfig.getBuyPackageById;
@@ -170,9 +176,72 @@ const requestApi = {
         let r = await getDataWithParams(url, body);
         return r;
     },
-    
+    purchasedNFTHistory: async (body) => {
+        const url = purchasedNFTAPIConfig.purchasedNFTHistory;
+        let r = await getDataWithParams(url, body);
+        return r;
+    },
 
-
+    getProfile: async () => {
+        const url = profileAPIConfig.getUserProfile;
+        let r = await getData(url);
+        return r;
+    },
+    updateProfile: async (body) => {
+        const url = profileAPIConfig.updateProfile;
+        let r = await postData(url, body);
+        return r;
+    },
+    changePassword: async (body) => {
+        const url = profileAPIConfig.changePassword;
+        let r = await postDataWithFormData(url, body);
+        return r;
+    },
+    changeTransactionPassword: async (body) => {
+        const url = profileAPIConfig.changeTransactionPassword;
+        let r = await postDataWithFormData(url, body);
+        return r;
+    },
+    supportRaise: async (body) => {
+        const url = profileAPIConfig.supportRaise;
+        let r = await postData(url, body);
+        return r;
+    },
+    supportRaiseList: async (body) => {
+        const url = profileAPIConfig.supportResponseList;
+        let r = await getDataWithParams(url, body);
+        return r;
+    },
+    updateProfilePicture: async (body) => {
+        const url = profileAPIConfig.updateProfilePicture;
+        let r = await postDataWithFormData(url, body);
+        return r;
+    },
+    accountSummary: async (body) => {
+        const url = withdrawAPIConfig.accountSummary;
+        let r = await getDataWithParams(url, body);
+        return r;
+    },
+    withdrawSummary: async (body) => {
+        const url = withdrawAPIConfig.withdrawSummary;
+        let r = await getDataWithParams(url, body);
+        return r;
+    },
+    getWalletAddress: async () => {
+        const url = withdrawAPIConfig.getWalletAddress;
+        let r = await getData(url);
+        return r;
+    },
+    updateCryptoWallet: async (body) => {
+        const url = withdrawAPIConfig.updateCryptoWallet;
+        let r = await postData(url, body);
+        return r;
+    },
+    updateWithdraw: async (body) => {
+        const url = withdrawAPIConfig.updateWithdraw;
+        let r = await postData(url, body);
+        return r;
+    },
 }
 
 export default requestApi;

@@ -103,11 +103,21 @@ const AppSidebar = () => {
                     true
                 )}
 
-                {renderSidebarSection(
+                {/* {renderSidebarSection(
                     'Staking',
                     [
                         ['Staking', '/top-up', <User className="text-neutral-400" />],
                         ['Staking History', '/top-history', <History className="text-neutral-400" />],
+                    ],
+                    true
+                )} */}
+
+                {renderSidebarSection(
+                    'NFT Market',
+                    [
+                        ['Buy NFT', '/nft-list/Buy', <User className="text-neutral-400" />],
+                        ['Sell NFT', '/nft-list/Sell', <History className="text-neutral-400" />],
+                        ['Purchased History', '/top-history', <History className="text-neutral-400" />],
                     ],
                     true
                 )}
@@ -135,17 +145,17 @@ const AppSidebar = () => {
                     true
                 )}
 
-                {renderSidebarSection('Transfer', [
+                {/* {renderSidebarSection('Transfer', [
                     ['Transfer P2P', '/transfer-p2p', <UserPen className="text-neutral-400" />],
                     ['Transfer P2P History', '/transfer-history', <KeyRound className="text-neutral-400" />],
                     ['Transfer To Fund', '/transfer-to-fund', <KeySquare className="text-neutral-400" />],
                     ['Transfer To Fund History', '/transfer-to-fund-history', <CircleHelp className="text-neutral-400" />],
-                ])}
+                ])} */}
 
-                {renderSidebarSection('Leg Wise / Rank', [
+                {/* {renderSidebarSection('Leg Wise / Rank', [
                     ['Total Business Leg Wise', '/total-business-legwise', <IoList size={25} className="text-neutral-400" />],
                     ['Rank List', '/rank-list', <MdChecklistRtl size={25} className="text-neutral-400" />],
-                ])}
+                ])} */}
 
                 {renderSidebarSection('Profile', [
                     ['Edit Profile', '/edit-profile', <UserPen className="text-neutral-400" />],
@@ -170,7 +180,7 @@ const AppSidebar = () => {
                     <div className="flex flex-col gap-3 bg-[#242427]/50 rounded-lg p-4 border-emerald-500/30 border">
                         {[
                             ['Plan', './plan.pdf', <File size={25} className="text-neutral-400" />],
-                            ['Whitepaper', './whitepaper.pdf', <File size={25} className="text-neutral-400" />],
+                            // ['Whitepaper', './whitepaper.pdf', <File size={25} className="text-neutral-400" />],
                         ].map(([itemTitle, link, Icon], index) => (
                             <React.Fragment key={`${itemTitle}`}>
                                 <a href={link} className="flex gap-2 justify-start items-center">

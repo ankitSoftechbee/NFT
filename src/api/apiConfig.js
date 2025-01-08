@@ -10,7 +10,8 @@ export const authAPIConfig = {
 export const dashboardAPIConfig = {
     dashboard: key + '/Dashboard',
     currentNFT: key + '/Packages',
-    purchasedNFT: key + '/BuyInvestmentHistory'
+    purchasedNFT: key + '/BuyInvestmentHistory',
+    news:key+'/News'
 }
 
 export const operationAPIConfig = {
@@ -25,7 +26,7 @@ export const operationAPIConfig = {
 export const depositAPIConfig = {
     deposit: key + '/api/User/DepositeWallet',
     getwalletBalance: key + '/WalletBalance',
-    getWalletAddress: key + '',
+    // getWalletAddress: key + '',
     getPaymentMethod: key + '/GetPaymentMode',
     manualDepositeHistory: key + '/ManualDepositeHistory',
     fundSummary: key + '/FundSummary',
@@ -39,4 +40,26 @@ export const incomeAPIConfig = {
 export const affiliateAPIConfig = {
     directTeam: key + '/DirectTeam',
     myTeam: key + '/MyTeam'
+}
+
+export const purchasedNFTAPIConfig = {
+    purchasedNFTHistory: key + '/SellInvestmentHistory',
+
+}
+export const profileAPIConfig = {
+    getUserProfile: key + '/GetProfile',
+    updateProfile: key + '/api/User/Profile',
+    changePassword: key + '/api/User/ChangePassword',
+    changeTransactionPassword: key + '/api/User/ChangeTransactionPass',
+    supportRaise: key + '/api/User/SupportTicket',
+    supportResponseList: key + '/SupportResponse',
+    updateProfilePicture: key + '/api/User/UploadProfileImg'
+}
+
+export const withdrawAPIConfig = {
+    accountSummary: key + '/AccountSummary',
+    withdrawSummary: key + '/WithdrawReport',
+    getWalletAddress: key + '/GetWalletAddress',
+    updateCryptoWallet: key + '/api/User/CryptoWallet',
+    updateWithdraw: key + '/api/User/Withdraw'
 }

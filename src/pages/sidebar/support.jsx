@@ -5,6 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import metaBullApi from '@/api/game-app';
 import toast from 'react-hot-toast';
+import requestApi from '@/service/service';
 
 // Validation Schema
 const TicketSubmissionSchema = Yup.object().shape({
@@ -15,30 +16,36 @@ const TicketSubmissionSchema = Yup.object().shape({
 const Support = () => {
     const [openTicketMutation] = metaBullApi.useSupportMutation();
 
-    const handleSubmit = (values, action) => {
-        action.setSubmitting(true);
-        toast.promise(
-            openTicketMutation(values)
-                .unwrap()
-                .then(payload => {
-                    if (payload === 1) {
-                        action.setSubmitting(false);
-                        action.resetForm();
-                        return payload;
-                    }
-                    throw new Error('Something went wrong');
-                })
-                .catch(error => {
-                    action.setSubmitting(false);
-                    console.log(error);
-                    throw error;
-                }),
-            {
-                loading: 'sending...',
-                success: payload => `ticket opened`,
-                error: error => `ticket application failed : ${error.message}`,
-            }
-        );
+    const handleSubmit = async (values, action) => {
+        // action.setSubmitting(true);
+        // toast.promise(
+        //     openTicketMutation(values)
+        //         .unwrap()
+        //         .then(payload => {
+        //             if (payload === 1) {
+        //                 action.setSubmitting(false);
+        //                 action.resetForm();
+        //                 return payload;
+        //             }
+        //             throw new Error('Something went wrong');
+        //         })
+        //         .catch(error => {
+        //             action.setSubmitting(false);
+        //             console.log(error);
+        //             throw error;
+        //         }),
+        //     {
+        //         loading: 'sending...',
+        //         success: payload => `ticket opened`,
+        //         error: error => `ticket application failed : ${error.message}`,
+        //     }
+        // );
+        const response = await requestApi.supportRaise(values)
+        if (response.status === 200) {
+            toast.success('Ticket raised successfully');
+        } else {
+            toast.error('Failed to raise ticket');
+        }
     };
 
     return (

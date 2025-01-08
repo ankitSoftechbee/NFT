@@ -1,17 +1,23 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Volume2 } from 'lucide-react';
 import metaBullApi from '@/api/game-app';
+import requestApi from '@/service/service';
 
 const Announcement = () => {
-    const { data, isLoading, isFetching } = metaBullApi.useAnnouncementsQuery();
+    const [news, setNews] = useState('')
 
-    // If loading or no data, return null
-    if (isLoading || isFetching || !data || data.length === 0) {
-        return null;
+    useEffect(() => {
+        fetchNews()
+    }, [])
+
+    const fetchNews = async () => {
+        const response = await requestApi.getNews()
+        if (response.status === 200) {
+            setNews(response.data)
+        } else {
+            setNews('No update')
+        }
     }
-
-    // Determine text to display (prefer title, fallback to news)
-    const displayText = data?.tittle + ' ' + data?.news || 'No announcement';
 
     return (
         <div className="p-2">
@@ -19,7 +25,7 @@ const Announcement = () => {
                 <Volume2 size={30} className="text-neutral-500 flex-shrink-0" />
 
                 <div className="marquee-container w-full overflow-hidden">
-                    <div className="marquee-content">{displayText}</div>
+                    <div className="marquee-content">{news ? `${news.tittle} : ${news.news}` : ''}</div>
                 </div>
             </div>
         </div>

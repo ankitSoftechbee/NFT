@@ -5,6 +5,7 @@ import { Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import toast from 'react-hot-toast';
 import metaBullApi from '@/api/game-app';
+import requestApi from '@/service/service';
 
 const PictureUploadSchema = Yup.object().shape({
     picture: Yup.mixed()
@@ -26,33 +27,40 @@ const UpdateProfilePic = () => {
             picture: null,
         },
         validationSchema: PictureUploadSchema,
-        onSubmit: (values, { setSubmitting, resetForm }) => {
+        onSubmit: async (values, { setSubmitting, resetForm }) => {
             const formData = new FormData();
             formData.append('file', values.picture);
 
             setSubmitting(true);
 
-            toast.promise(
-                UpdateProfilePicMutation(formData)
-                    .unwrap()
-                    .then(payload => {
-                        console.log(payload);
-                        resetForm();
-                        setSubmitting(false);
-                        setReceiptFile(null);
-                        setSelectedMode(null);
-                    })
-                    .catch(error => {
-                        console.log(error);
-                        setSubmitting(false);
-                        throw error;
-                    }),
-                {
-                    loading: 'updating...',
-                    success: payload => `update successful`,
-                    error: error => `update failed : ${error}`,
-                }
-            );
+            // toast.promise(
+            //     UpdateProfilePicMutation(formData)
+            //         .unwrap()
+            //         .then(payload => {
+            //             console.log(payload);
+            //             resetForm();
+            //             setSubmitting(false);
+            //             setReceiptFile(null);
+            //             setSelectedMode(null);
+            //         })
+            //         .catch(error => {
+            //             console.log(error);
+            //             setSubmitting(false);
+            //             throw error;
+            //         }),
+            //     {
+            //         loading: 'updating...',
+            //         success: payload => `update successful`,
+            //         error: error => `update failed : ${error}`,
+            //     }
+            // );
+            const response = await requestApi.updateProfilePicture(formData)
+            if (response.status === 200) {
+                toast.success('Profile picture updated successfully')
+                setSubmitting(false)
+            } else {
+                toast.error('Failed to update profile picture')
+            }
         },
     });
 

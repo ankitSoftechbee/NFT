@@ -24,22 +24,22 @@ const Home = ({ }) => {
 
     const fetchDashboard = async () => {
         const response = await requestApi.dashboard()
-        if (response && response.username) {
-            setData(response)
+        if (response.status===200) {
+            setData(response.data)
         }
     }
 
     const fetchCurrentNFT = async () => {
         const response = await requestApi.currentNFT()
-        if (response && response.data.length > 0) {
-            setCurrentNFTList(response.data)
+        if (response.status===200) {
+            setCurrentNFTList(response.data.data)
         }
     }
     const fetchPurchasedNFT = async () => {
         const body = { PageNumber: 1, PageSize: 10 }
         const response = await requestApi.purchasedNFT(body)
-        if (response && response.data.length > 0) {
-            setPurchasedNFTList(response.data)
+        if (response.status===200) {
+            setPurchasedNFTList(response.data.data)
         }
     }
 

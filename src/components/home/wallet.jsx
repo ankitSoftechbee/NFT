@@ -11,7 +11,7 @@ const WalletWidget = (props) => {
     const { data } = props
 
     return (
-        <div className="relative bg-gradient-to-r from-[rgba(2,0,36,1)] via-[rgba(44,131,149,1)] to-[rgba(0,212,255,1)] p-5 flex flex-col gap-2 m-2 overflow-clip h-max rounded-3xl border-emerald-500/30 border min-h-[320px]">
+        <div className="relative bg-gradient-to-r from-[#2a0b5f] to-[#d32dba] p-5 flex flex-col gap-2 m-2 overflow-clip h-max rounded-3xl border-emerald-500/30 border min-h-[320px]">
             <div className="absolute -right-10 -bottom-10 bg-emerald-500 rounded-full h-40 w-40 blur-[100px]"></div>
             <div className="flex justify-between mb-5">
                 <div className="flex items-center gap-4">
@@ -26,7 +26,7 @@ const WalletWidget = (props) => {
             <div className="grid grid-cols-2 justify-start">
                 <div>
                     <div className="flex items-center justify-start gap-3">
-                        <div className="text-sm text-app-text-muted">Fund Balance</div>
+                        <div className="text-sm text-white text-app-text-muted">Fund Balance</div>
                         {/* <RefreshCcw size={17} className={cn('text-app-text-muted', { 'animate-spin': isLoading || isFetching })} onClick={() => refetch()} /> */}
                     </div>
                     <div className="text-[30px] font-medium z-10">
@@ -36,7 +36,7 @@ const WalletWidget = (props) => {
                 </div>
                 <div>
                     <div className="flex items-center justify-start gap-3">
-                        <div className="text-sm text-app-text-muted">Account Balance</div>
+                        <div className="text-sm text-white text-app-text-muted">Account Balance</div>
                         {/* <RefreshCcw size={17} className={cn('text-app-text-muted', { 'animate-spin': isLoading || isFetching })} onClick={() => refetch()} /> */}
                     </div>
                     <div className="text-[30px] font-medium z-10">

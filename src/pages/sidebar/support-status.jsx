@@ -3,84 +3,71 @@ import { Clock, MessageCircle, User } from 'lucide-react';
 import Pagination from '@/components/ui/pagination/Pagination';
 import metaBullApi from '@/api/game-app';
 import { v4 as uuidv4 } from 'uuid';
+import requestApi from '@/service/service';
+import { TablePagination } from '@mui/material';
 
 const SupportStatus = () => {
-    const [currentPage, setCurrentPage] = useState(1);
-    const [supportData, setSupportData] = useState({
-        totalRecord: 0,
-        data: [],
+    const [filter, setFilter] = useState({
+        PageNumber: 1,
+        PageSize: 10,
     });
 
-    // Use the mutation hook with error handling
-    const [supportStatusTrigger, { isLoading, isError, data, error }] = metaBullApi.useSupportStatusMutation();
+    const [data, setData] = useState([]);
+    const [totalRecords, setTotalRecords] = useState(0);
 
-    // Fetch data when component mounts or page changes
     useEffect(() => {
-        const fetchSupportStatus = async () => {
-            try {
-                const response = await supportStatusTrigger({
-                    pageNumber: currentPage,
-                    pageSize: 10,
-                }).unwrap();
+        fetchData();
+    }, [filter]);
 
-                // Assuming the API returns an object with totalRecord and data
-                if (response) {
-                    setSupportData({
-                        totalRecord: response.totalRecord || 0,
-                        data: response.data || [],
-                    });
-                }
-            } catch (err) {
-                console.error('Failed to fetch support status:', err);
-                // Optionally set an error state or show a toast
-            }
-        };
-
-        fetchSupportStatus();
-    }, [currentPage, supportStatusTrigger]);
-
-    // Function to format date
-    const formatDate = dateString => {
-        const date = new Date(dateString);
-        return date.toLocaleString('en-US', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-        });
+    const fetchData = async () => {
+        try {
+            const response = await requestApi.supportRaiseList(filter);
+            setData(response?.data?.data || []);
+            setTotalRecords(response?.data.totalRecord || 0);
+        } catch (error) {
+            toast.error("Error fetching deposit history");
+            setData([]);
+            setTotalRecords(0);
+        }
     };
 
-    // Loading state
-    if (isLoading) {
-        return <div className="w-full mx-auto text-center text-white">Loading support tickets...</div>;
-    }
+    const handlePageChange = (event, newPage) => {
+        setFilter((prevFilter) => ({
+            ...prevFilter,
+            PageNumber: newPage + 1,
+        }));
+    };
 
-    // Error state
-    if (isError) {
-        return <div className="w-full mx-auto text-center text-red-500">Error loading support tickets: {error?.message || 'Unknown error'}</div>;
-    }
+    const handleRowsPerPageChange = (event) => {
+        setFilter((prevFilter) => ({
+            ...prevFilter,
+            PageSize: parseInt(event.target.value, 10),
+            PageNumber: 1,
+        }));
+    };
+
+
 
     return (
         <div className="w-full mx-auto">
-            <h2 className="text-2xl font-bold text-center text-white mb-6">Support Ticket Status</h2>
 
-            <div className="space-y-4">
-                {supportData.data.length === 0 ? (
-                    <div className="text-center text-gray-400">No support tickets found</div>
+            <h2 className="text-lg font-semibold text-white text-left mt-10">Statements</h2>
+            <div className="space-y-4 mt-5">
+                {totalRecords === 0 ? (
+                    <div className="w-full mx-auto text-center text-white">No records found.</div>
                 ) : (
-                    supportData.data.map(item => (
+                    data.map((item, index) => (
                         <div key={uuidv4()} className="bg-[#1d1d1f] rounded-xl border border-emerald-500/20 p-4">
                             <div className="flex flex-col space-y-3">
                                 {/* Header */}
                                 <div className="flex justify-between items-center">
                                     <div className="flex items-center space-x-2">
                                         <User className="w-5 h-5 text-app-text-primary" />
-                                        <span className="text-gray-300 font-medium">{item.username}</span>
+                                        <span className="text-gray-300 font-medium">{item?.username || ''}</span>
                                     </div>
                                     <div className="flex items-center space-x-2">
                                         <Clock className="w-4 h-4 text-gray-500" />
-                                        <span className="text-xs text-gray-500">{formatDate(item.doi)}</span>
+                                        <span className="text-xs text-gray-500">{item?.doi || ''}</span>
                                     </div>
                                 </div>
 
@@ -88,9 +75,9 @@ const SupportStatus = () => {
                                 <div className="border-t border-emerald-500/20 pt-3">
                                     <div className="flex items-center space-x-2 mb-2">
                                         <MessageCircle className="w-5 h-5 text-app-text-primary" />
-                                        <h3 className="text-lg font-semibold text-white">{item.subject}</h3>
+                                        <h3 className="text-lg font-semibold text-white">{item?.subject || ''}</h3>
                                     </div>
-                                    <p className="text-gray-400 text-sm">{item.message}</p>
+                                    <p className="text-gray-400 text-sm">{item?.message || ''}</p>
                                 </div>
 
                                 {/* Status and Response */}
@@ -101,14 +88,38 @@ const SupportStatus = () => {
                                             <span className="px-2 py-1 bg-yellow-500/20 text-yellow-400 rounded-full text-xs font-medium">{item.status}</span>
                                         </div>
                                     </div>
-                                    <div className="mt-2 text-gray-400 text-sm italic">"{item.response}"</div>
+                                    <div className="mt-2 text-gray-400 text-sm italic">"{item?.response || ''}"</div>
                                 </div>
                             </div>
                         </div>
                     ))
                 )}
 
-                {supportData.totalRecord > 0 && <Pagination currentPage={currentPage} totalCount={supportData.totalRecord} pageSize={10} onPageChange={setCurrentPage} />}
+                {totalRecords > 0 && (
+                    <TablePagination
+                        component="div"
+                        count={totalRecords}
+                        page={filter.PageNumber - 1} // Adjust for zero-based index
+                        onPageChange={handlePageChange}
+                        rowsPerPage={filter.PageSize}
+                        onRowsPerPageChange={handleRowsPerPageChange}
+                        sx={{
+                            color: 'white',
+                            '& .MuiTablePagination-actions button': {
+                                color: 'white',
+                            },
+                            '& .MuiSelect-select': {
+                                color: 'white',
+                            },
+                            '& .MuiSvgIcon-root': {
+                                color: 'white',
+                            },
+                            '& .MuiTablePagination-caption': {
+                                color: 'white',
+                            },
+                        }}
+                    />
+                )}
             </div>
         </div>
     );

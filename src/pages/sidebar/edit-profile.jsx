@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import * as Yup from 'yup';
 import { Formik, Form, Field } from 'formik';
 import { Label } from '@/components/ui/label';
@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import metaBullApi from '@/api/game-app';
 import moment from 'moment/moment';
 import toast from 'react-hot-toast';
+import requestApi from '@/service/service';
 
 // Validation Schema
 const PersonalDetailsSchema = Yup.object().shape({
@@ -18,41 +19,43 @@ const PersonalDetailsSchema = Yup.object().shape({
 });
 
 const EditProfile = () => {
-    const { data: profileData, isLoading, isFetching } = metaBullApi.useProfileQuery({ UserName: JSON.parse(window.localStorage.getItem('metabull-user')).userName });
-    const [updateProfileMutation] = metaBullApi.useEditProfileMutation();
+    const [profileData, setProfileData] = useState('')
 
-    const handleSubmit = (values, action) => {
-        action.setSubmitting(true);
-        toast.promise(
-            updateProfileMutation(values)
-                .unwrap()
-                .then(payload => {
-                    console.log(payload);
-                    action.setSubmitting(false);
-                    return payload;
-                })
-                .catch(error => {
-                    action.setSubmitting(false);
-                    console.log(error);
-                    throw error;
-                }),
-            {
-                loading: 'updating...',
-                success: payload => `profile updated`,
-                error: error => `updation failed : ${error}`,
-            }
-        );
-    };
+    useEffect(() => {
+        fetchProfile()
+    }, [])
 
-    if (isLoading || isFetching) return <div>Fetching Profile Data...</div>;
+    const fetchProfile = async () => {
+        const response = await requestApi.getProfile()
+        if (response.status === 200) {
+            setProfileData(response.data)
+        } else {
+            setProfileData('')
+            toast.error('User not found')
+        }
+    }
 
+
+    const handleSubmit = async (values) => {
+        const response = await requestApi.updateProfile(values)
+        console.log(response)
+        if (response.status === 200) {
+            toast.success('Profile updated')
+            setTimeout(() => {
+                window.location.reload()
+            }, 1000)
+        } else {
+            toast.error('Failed to update profile')
+        }
+
+    }
     return (
         <>
             <div className="w-full bg-[#1d1d1f] rounded-2xl shadow-2xl border border-emerald-500/20 p-4 mx-auto">
                 <h2 className="text-2xl font-semibold text-center text-white mb-6">Admission Detail</h2>
                 <div className="flex gap-2 mb-1">
                     <div>User ID : </div>
-                    <div className="text-app-text-primary font-medium">{profileData?.username}</div>
+                    <div className="text-app-text-primary font-medium">{profileData?.username || ''}</div>
                 </div>
                 <div className="flex gap-2 mb-1">
                     <div>Date of Joining : </div>
@@ -76,6 +79,7 @@ const EditProfile = () => {
                         mobile: profileData?.mobile || '',
                         address: profileData?.address || '',
                     }}
+                    enableReinitialize
                     validationSchema={PersonalDetailsSchema}
                     onSubmit={handleSubmit}
                 >

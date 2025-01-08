@@ -25,16 +25,17 @@ const Operation = () => {
     const fetchBuyPackage = async (id) => {
         const body = { RID: id }
         const response = await requestApi.getBuyPackageById(body)
-        if (response && response.name) {
-            setData(response)
+        if (response.status===200) {
+            setData(response.data)
         }
 
     }
     const fetchSellPackage = async (id) => {
         const body = { RID: id }
         const response = await requestApi.getSellPackageById(body)
-        if (response && response.packType) {
-            setData(response)
+        console.log(response)
+        if  (response.status===200) {
+            setData(response.data)
         }
     }
 
@@ -60,10 +61,11 @@ const Operation = () => {
                 "rid": data.rid,
             }
             const response = await requestApi.sellPackage(body)
+            console.log(response)
             if (response.status === 200) {
                 toast.success('Sell Successfully')
             } else {
-                toast.error('Sell Failed: Today limit reached')
+                toast.error('Already Selled')
             }
         } else {
             toast.error('Invalid Request')
