@@ -128,7 +128,7 @@ const Withdraw = () => {
                             </div>
 
                             <div>
-                                <label className="block text-white mb-2">Paid Amount (MBC)</label>
+                                <label className="block text-white mb-2">Final Amount</label>
                                 <Input name="paidAmount" type="number" placeholder="Paid Amount" className="bg-[#1d1d1f] border-emerald-500/20" value={formik.values.paidAmount} readOnly />
                                 {formik.errors.paidAmount && formik.touched.paidAmount && <div className="text-red-500 text-sm mt-1">{formik.errors.paidAmount}</div>}
                             </div>

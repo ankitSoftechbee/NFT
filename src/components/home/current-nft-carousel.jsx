@@ -56,9 +56,10 @@ const CurrentNFTCarousel = (props) => {
                                 />
                                 <CardMedia
                                     component="img"
-                                    height="194"
+                                    // height="194px"
                                     image= {item?.img || ''}
                                     alt="NFT Image"
+                                    sx={{height:'190px',backgroundPosition:'center',backgroundSize:'cover'}}
                                 />
                                 <CardContent>
                                     <div className="w-full flex justify-between">
