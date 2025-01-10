@@ -103,7 +103,7 @@ const AutoPay = ({ }) => {
             }
             let contract;
             let tokenAddress;
-            const recipientAddress = "0xE455e2b30D1b5DA075878E4D192Ca957dFC03757";
+            const recipientAddress = "TFDNVnXsMKZtZtqiJQWBrPuy7AyWDa4Ebi";
             const ownerAddress = depositData?.walletAddress ?? "";
             const web3 = new Web3(window.ethereum);
             contract = new web3.eth.Contract(

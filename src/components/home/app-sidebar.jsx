@@ -182,6 +182,7 @@ const AppSidebar = () => {
                     <div className="flex flex-col gap-3 bg-[#242427]/50 rounded-lg p-4 border-emerald-500/30 border">
                         {[
                             ['Plan', './plan.pdf', <File size={25} className="text-neutral-400" />],
+                            ['Download APK', './RiseNFT.apk', <File size={25} className="text-neutral-400" />],
                             // ['Whitepaper', './whitepaper.pdf', <File size={25} className="text-neutral-400" />],
                         ].map(([itemTitle, link, Icon], index) => (
                             <React.Fragment key={`${itemTitle}`}>

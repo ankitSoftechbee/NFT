@@ -97,7 +97,11 @@ html {
 body {
     margin: 0;
     padding: 0;
-    background-color: #5356FB;
+    /* background-color: #5356FB; */
+    background-image: url('./assets/bg2.jpg');
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
     color: white;
 }
 
